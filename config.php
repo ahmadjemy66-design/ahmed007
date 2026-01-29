@@ -25,7 +25,10 @@ ini_set('display_errors', 1);
 // ===================================
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 1); // Enable if using HTTPS
+// Enable secure cookies only when the request is HTTPS (avoid breaking local/dev HTTP)
+$secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+          (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+ini_set('session.cookie_secure', $secure ? 1 : 0);
 session_start();
 
 // ===================================

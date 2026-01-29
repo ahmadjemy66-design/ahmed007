@@ -978,65 +978,8 @@
                 <p>تابع أحدث الإطلاقات والمقالات والتحديثات</p>
             </div>
 
-            <div class="news-grid">
-                <div class="news-card fade-in-up">
-                    <div class="news-image">
-                        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="كتاب جديد">
-                        <span class="news-badge">جديد</span>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="far fa-calendar"></i> 15 يناير 2026</span>
-                            <span><i class="far fa-folder"></i> كتب</span>
-                        </div>
-                        <h3>إطلاق كتاب "التسويق كأسلوب حياة"</h3>
-                        <p>سعداء بالإعلان عن إطلاق كتابي الجديد الذي يتناول كيفية بناء علامة تجارية شخصية مؤثرة في السوق
-                            العربي الحديث</p>
-                        <a href="#" class="read-more">
-                            اقرأ المزيد
-                            <i class="fas fa-arrow-left"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="news-card fade-in-up">
-                    <div class="news-image">
-                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="دورة تدريبية">
-                        <span class="news-badge">قريباً</span>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="far fa-calendar"></i> 1 فبراير 2026</span>
-                            <span><i class="far fa-folder"></i> دورات</span>
-                        </div>
-                        <h3>دورة "إدارة المسوقين الاحترافية"</h3>
-                        <p>انضم إلى دورتنا الشاملة لتعلم كيفية التعامل الفعال مع فريق التسويق وقيادة المشاريع الطموحة
-                        </p>
-                        <a href="#" class="read-more">
-                            اقرأ المزيد
-                            <i class="fas fa-arrow-left"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="news-card fade-in-up">
-                    <div class="news-image">
-                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="خدمة جديدة">
-                        <span class="news-badge">إطلاق</span>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="far fa-calendar"></i> 10 يناير 2026</span>
-                            <span><i class="far fa-folder"></i> خدمات</span>
-                        </div>
-                        <h3>خدمة تحليل السوق المتقدمة</h3>
-                        <p>أطلقنا خدمة جديدة لتحليل السوق والمنافسين باستخدام أحدث تقنيات الذكاء الاصطناعي</p>
-                        <a href="#" class="read-more">
-                            اقرأ المزيد
-                            <i class="fas fa-arrow-left"></i>
-                        </a>
-                    </div>
-                </div>
+            <div class="news-grid" id="newsGrid">
+                <!-- Articles will be loaded dynamically from /api/articles.php -->
             </div>
         </div>
     </section>
@@ -1361,6 +1304,59 @@
         }
         });
         });
+    </script>
+    <script>
+        // Load articles from API and render into the news grid
+        async function loadArticles() {
+            const grid = document.getElementById('newsGrid');
+            if (!grid) return;
+
+            try {
+                const res = await fetch('/api/articles.php');
+                const data = await res.json();
+                if (!data.success) return;
+
+                grid.innerHTML = '';
+                data.articles.forEach(article => {
+                    const card = document.createElement('div');
+                    card.className = 'news-card fade-in-up';
+
+                    const imageHtml = `
+                        <div class="news-image">
+                            <img src="${article.image_url || 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?auto=format&fit=crop&w=800&q=80'}" alt="${escapeHtml(article.title)}">
+                            ${article.badge ? `<span class="news-badge">${escapeHtml(article.badge)}</span>` : ''}
+                        </div>`;
+
+                    const publishDate = article.publish_date || '';
+                    const metaHtml = `
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span><i class="far fa-calendar"></i> ${escapeHtml(publishDate)}</span>
+                                <span><i class="far fa-folder"></i> ${escapeHtml(article.category)}</span>
+                            </div>
+                            <h3>${escapeHtml(article.title)}</h3>
+                            <p>${escapeHtml(article.excerpt || '')}</p>
+                            <a href="/articles/${encodeURIComponent(article.slug)}" class="read-more">اقرأ المزيد <i class="fas fa-arrow-left"></i></a>
+                        </div>`;
+
+                    card.innerHTML = imageHtml + metaHtml;
+                    grid.appendChild(card);
+                });
+
+                // Trigger fade-in animations for newly added elements
+                document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+            } catch (e) {
+                console.error('Failed to load articles', e);
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&"'<>]/g, function (m) { return ({'&':'&amp;','"':'&quot;',"'":'&#39;','<':'&lt;','>':'&gt;'})[m]; });
+        }
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', loadArticles);
     </script>
 </body>
 
