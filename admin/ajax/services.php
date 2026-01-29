@@ -16,6 +16,25 @@ header('Content-Type: application/json');
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 $response = ['success' => false, 'message' => ''];
 
+// Temporary debug: if no action provided, return diagnostic info
+if (empty($action)) {
+    $raw = @file_get_contents('php://input');
+    $headers = function_exists('getallheaders') ? getallheaders() : [];
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'message' => 'إجراء غير معروف',
+        'debug' => [
+            'method' => $_SERVER['REQUEST_METHOD'] ?? null,
+            'GET' => $_GET,
+            'POST' => $_POST,
+            'raw_input' => $raw,
+            'headers' => $headers
+        ]
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 try {
     switch ($action) {
         case 'get':
