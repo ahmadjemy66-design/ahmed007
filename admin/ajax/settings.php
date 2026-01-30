@@ -19,14 +19,19 @@ $response = ['success' => false, 'message' => ''];
 try {
     switch ($action) {
         case 'save':
+            $updated = [];
             foreach ($_POST as $key => $value) {
                 if ($key !== 'action') {
                     $stmt = $db->prepare("UPDATE site_settings SET setting_value = :value WHERE setting_key = :key");
                     $stmt->execute([':value' => sanitize($value), ':key' => $key]);
+                    $updated[$key] = $stmt->rowCount();
                 }
             }
             logActivity($db, $_SESSION['admin_id'], 'settings_update', 'تحديث الإعدادات');
-            $response = ['success' => true, 'message' => 'تم حفظ الإعدادات بنجاح'];
+            // Return current settings for verification
+            $stmt = $db->query("SELECT setting_key, setting_value FROM site_settings");
+            $settings = $stmt->fetchAll();
+            $response = ['success' => true, 'message' => 'تم حفظ الإعدادات بنجاح', 'updated' => $updated, 'settings' => $settings];
             break;
             
         case 'change_password':
