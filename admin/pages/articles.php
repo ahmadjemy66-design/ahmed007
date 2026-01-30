@@ -113,7 +113,7 @@ function showAddForm() {
 }
 
 function editArticle(id) {
-    $.get('ajax/articles.php?action=get&id=' + id, function(response) {
+    $.get('/admin/ajax/articles.php?action=get&id=' + id, function(response) {
         if (response.success) {
             const article = response.data;
             $('#modalTitle').text('تعديل المقال');
@@ -136,7 +136,7 @@ $('#articleForm').on('submit', function(e) {
     const formData = $(this).serialize();
     const action = $('#articleId').val() ? 'update' : 'create';
     
-    $.post('ajax/articles.php', formData + '&action=' + action, function(response) {
+    $.post('/admin/ajax/articles.php', formData + '&action=' + action, function(response) {
         if (response.success) {
             Swal.fire('نجح', response.message, 'success');
             location.reload();

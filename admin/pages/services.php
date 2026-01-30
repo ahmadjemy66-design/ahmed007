@@ -94,7 +94,7 @@ function showAddForm() {
 }
 
 function editService(id) {
-    $.get('ajax/services.php?action=get&id=' + id, function(response) {
+    $.get('/admin/ajax/services.php?action=get&id=' + id, function(response) {
         if (response.success) {
             const service = response.data;
             $('#modalTitle').text('تعديل الخدمة');
@@ -114,7 +114,7 @@ $('#serviceForm').on('submit', function(e) {
     const formData = $(this).serialize();
     const action = $('#serviceId').val() ? 'update' : 'create';
     
-    $.post('ajax/services.php', formData + '&action=' + action, function(response) {
+    $.post('/admin/ajax/services.php', formData + '&action=' + action, function(response) {
         if (response.success) {
             Swal.fire('نجح', response.message, 'success');
             location.reload();
