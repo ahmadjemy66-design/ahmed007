@@ -339,7 +339,7 @@ try {
 
 <script>
 function viewMessage(id) {
-    $.get('admin/ajax/messages.php?action=view&id=' + id, function(response) {
+    $.get('/admin/ajax/messages.php?action=view&id=' + id, function(response) {
         if (response.success) {
             const msg = response.data;
             $('#messageDetails').html(`
@@ -374,7 +374,7 @@ function viewMessage(id) {
 }
 
 function replyMessage(id) {
-    $.get('admin/ajax/messages.php?action=view&id=' + id, function(response) {
+    $.get('/admin/ajax/messages.php?action=view&id=' + id, function(response) {
         if (response.success) {
             const msg = response.data;
             $('#replyForm').html(`
@@ -401,7 +401,7 @@ function sendReply(id) {
         return;
     }
     
-    $.post('admin/ajax/messages.php', {
+    $.post('/admin/ajax/messages.php', {
         action: 'reply',
         id: id,
         reply: reply
@@ -426,7 +426,7 @@ function deleteMessage(id) {
         cancelButtonText: 'إلغاء'
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post('admin/ajax/messages.php', {
+            $.post('/admin/ajax/messages.php', {
                 action: 'delete',
                 id: id
             }, function(response) {
