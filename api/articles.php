@@ -55,8 +55,8 @@ try {
     }
 
     // Get published articles (list)
-    $stmt = $db->prepare(""
-        SELECT 
+    $stmt = $db->prepare(<<<'SQL'
+        SELECT
             a.id,
             a.title,
             a.slug,
@@ -75,7 +75,8 @@ try {
         WHERE a.status = 'published'
         ORDER BY a.publish_date DESC
         LIMIT 200
-    """);
+    SQL
+    );
     
     $stmt->execute();
     $articles = $stmt->fetchAll();
