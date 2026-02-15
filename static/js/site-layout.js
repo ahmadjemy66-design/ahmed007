@@ -1,10 +1,11 @@
 (function(){
   const navItems = [
     { href: '/index.html', label: 'الرئيسية' },
+    { href: '/about.html', label: 'من أنا' },
     { href: '/articles.html', label: 'المقالات' },
     { href: '/courses.html', label: 'الدورات' },
-    { href: '/dictionary.html', label: 'القاموس' },
     { href: '/timeline.html', label: 'الخط الزمني' },
+    { href: '/dictionary.html', label: 'القاموس' },
     { href: '/influencers.html', label: 'المؤثرون' }
   ];
   const current = location.pathname.replace(/\/$/, '') || '/index.html';
