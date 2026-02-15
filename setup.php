@@ -39,11 +39,27 @@ try {
     $messages = [];
     
     // ===================================
+    // Drop Old Tables (properly handle foreign keys)
+    // ===================================
+    $db->exec("SET FOREIGN_KEY_CHECKS=0");
+    
+    // Drop in reverse order of dependencies
+    $db->exec("DROP TABLE IF EXISTS brands");
+    $db->exec("DROP TABLE IF EXISTS sectors");
+    $db->exec("DROP TABLE IF EXISTS articles");
+    $db->exec("DROP TABLE IF EXISTS contact_messages");
+    $db->exec("DROP TABLE IF EXISTS activity_log");
+    $db->exec("DROP TABLE IF EXISTS site_settings");
+    $db->exec("DROP TABLE IF EXISTS services");
+    $db->exec("DROP TABLE IF EXISTS admin_users");
+    
+    $db->exec("SET FOREIGN_KEY_CHECKS=1");
+    
+    // ===================================
     // Create Core Tables
     // ===================================
     
     // 1. Admin Users
-    $db->exec("DROP TABLE IF EXISTS admin_users");
     $db->exec("CREATE TABLE admin_users (
         id INT PRIMARY KEY AUTO_INCREMENT,
         username VARCHAR(50) UNIQUE NOT NULL,
@@ -61,7 +77,6 @@ try {
     $messages[] = '✓ تم إنشاء جدول admin_users';
     
     // 2. Site Settings
-    $db->exec("DROP TABLE IF EXISTS site_settings");
     $db->exec("CREATE TABLE site_settings (
         id INT PRIMARY KEY AUTO_INCREMENT,
         setting_key VARCHAR(100) UNIQUE NOT NULL,
@@ -74,7 +89,6 @@ try {
     $messages[] = '✓ تم إنشاء جدول site_settings';
     
     // 3. Services
-    $db->exec("DROP TABLE IF EXISTS services");
     $db->exec("CREATE TABLE services (
         id INT PRIMARY KEY AUTO_INCREMENT,
         title VARCHAR(255) NOT NULL,
@@ -93,7 +107,6 @@ try {
     $messages[] = '✓ تم إنشاء جدول services';
     
     // 4. Articles
-    $db->exec("DROP TABLE IF EXISTS articles");
     $db->exec("CREATE TABLE articles (
         id INT PRIMARY KEY AUTO_INCREMENT,
         title VARCHAR(255) NOT NULL,
@@ -118,7 +131,6 @@ try {
     $messages[] = '✓ تم إنشاء جدول articles';
     
     // 5. Contact Messages
-    $db->exec("DROP TABLE IF EXISTS contact_messages");
     $db->exec("CREATE TABLE contact_messages (
         id INT PRIMARY KEY AUTO_INCREMENT,
         name VARCHAR(100) NOT NULL,
@@ -138,7 +150,6 @@ try {
     $messages[] = '✓ تم إنشاء جدول contact_messages';
     
     // 6. Activity Log
-    $db->exec("DROP TABLE IF EXISTS activity_log");
     $db->exec("CREATE TABLE activity_log (
         id INT PRIMARY KEY AUTO_INCREMENT,
         admin_id INT,
@@ -159,7 +170,6 @@ try {
     $messages[] = '✓ تم إنشاء جدول activity_log';
     
     // 7. Sectors
-    $db->exec("DROP TABLE IF EXISTS sectors");
     $db->exec("CREATE TABLE sectors (
         id INT PRIMARY KEY AUTO_INCREMENT,
         name VARCHAR(255) NOT NULL,
@@ -176,7 +186,6 @@ try {
     $messages[] = '✓ تم إنشاء جدول sectors';
     
     // 8. Brands
-    $db->exec("DROP TABLE IF EXISTS brands");
     $db->exec("CREATE TABLE brands (
         id INT PRIMARY KEY AUTO_INCREMENT,
         sector_id INT NOT NULL,
