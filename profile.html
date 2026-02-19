@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>الملف الشخصي</title>
+  <link rel="stylesheet" href="/static/css/site-layout.css">
+  <style>
+    .profile-shell{max-width:900px;margin:90px auto;padding:20px}
+    .card{background:#fff;border-radius:12px;padding:18px}
+    .row{display:flex;gap:12px;align-items:center}
+    label{min-width:140px;font-weight:700;color:var(--site-text)}
+    input,select{padding:10px;border-radius:6px;border:1px solid #e5e7eb;width:100%}
+    .btn-primary{background:linear-gradient(135deg,var(--site-primary),var(--site-secondary));color:#fff;border:none;padding:10px 14px;border-radius:8px}
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main class="profile-shell">
+    <div class="card">
+      <h2>الملف الشخصي</h2>
+      <p id="loginNotice" style="color:#d00;display:none">يجب تسجيل الدخول لاستخدام هذه الصفحة</p>
+
+      <form id="profileForm" style="display:none;margin-top:12px">
+        <div style="margin-bottom:12px"><label>الاسم الكامل</label><input name="full_name" id="full_name"></div>
+        <div style="margin-bottom:12px"><label>البريد الإلكتروني</label><input id="email" disabled></div>
+        <div style="margin-bottom:12px"><label>الهاتف</label><input name="phone" id="phone"></div>
+        <div style="margin-bottom:12px"><label>الدولة</label><input name="country" id="country"></div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+          <button type="button" class="btn-primary" onclick="saveProfile()">حفظ التغييرات</button>
+          <a href="orders.html" class="continue-shopping">سجل الطلبات</a>
+        </div>
+      </form>
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/static/js/site-layout.js"></script>
+  <script>
+    async function loadProfile(){
+      try{
+        const res = await fetch('/api/users.php?action=me');
+        const data = await res.json();
+        if (!data.success){ document.getElementById('loginNotice').style.display='block'; return; }
+        document.getElementById('profileForm').style.display='block';
+        document.getElementById('full_name').value = data.data.full_name || '';
+        document.getElementById('email').value = data.data.email || '';
+        document.getElementById('phone').value = data.data.phone || '';
+        document.getElementById('country').value = data.data.country || '';
+      }catch(e){ console.error(e); document.getElementById('loginNotice').style.display='block'; }
+    }
+    async function saveProfile(){
+      const form = new FormData();
+      form.append('action','update');
+      form.append('full_name', document.getElementById('full_name').value);
+      form.append('phone', document.getElementById('phone').value);
+      form.append('country', document.getElementById('country').value);
+      const res = await fetch('/api/users.php', { method:'POST', body: form });
+      const data = await res.json();
+      if (data.success) alert('تم حفظ الملف الشخصي'); else alert('خطأ: '+(data.message||'')); 
+    }
+    document.addEventListener('DOMContentLoaded', loadProfile);
+  </script>
+</body>
+</html>

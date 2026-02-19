@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>طلباتي</title>
+  <link rel="stylesheet" href="/static/css/site-layout.css">
+  <style>
+    .shell{max-width:1100px;margin:90px auto;padding:18px}
+    .card{background:#fff;border-radius:12px;padding:18px}
+    .order-row{display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid #f0f0f0}
+    .order-number{font-weight:700;color:var(--site-primary)}
+    .order-status{padding:6px 10px;border-radius:12px;background:#eef2ff;color:var(--site-primary)}
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main class="shell">
+    <div class="card">
+      <h2>الطلبات</h2>
+      <div id="ordersList">جاري التحميل...</div>
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/static/js/site-layout.js"></script>
+  <script>
+    async function loadOrders(){
+      try{
+        const res = await fetch('/api/products.php?action=get_user_orders');
+        const data = await res.json();
+        const container = document.getElementById('ordersList');
+        if (!data.success){ container.innerHTML = '<p>يجب تسجيل الدخول</p>'; return; }
+        if (!data.data || data.data.length===0){ container.innerHTML = '<p>لا توجد طلبات</p>'; return; }
+        container.innerHTML = '';
+        data.data.forEach(o => {
+          const div = document.createElement('div');
+          div.className = 'order-row';
+          div.innerHTML = `<div><div class='order-number'>${o.order_number}</div><div>تاريخ: ${o.created_at}</div></div><div><div>${o.total_amount} ر.س</div><div class='order-status'>${o.status}</div><div style='margin-top:8px'><a class='btn-primary' href='order-details.html?order_id=${o.id}'>تفاصيل</a></div></div>`;
+          container.appendChild(div);
+        });
+      }catch(e){ console.error(e); document.getElementById('ordersList').innerHTML = '<p>خطأ في تحميل الطلبات</p>'; }
+    }
+    document.addEventListener('DOMContentLoaded', loadOrders);
+  </script>
+</body>
+</html>
