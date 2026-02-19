@@ -101,8 +101,8 @@ body {
 }
 
 .site-shell-header {
-  position: sticky;
-  top: 0;
+  /* position changed to static per request to make navbar non-sticky */
+  position: static;
   z-index: 2000;
   background: rgba(255,255,255,.95);
   backdrop-filter: blur(10px);
@@ -259,6 +259,14 @@ body {
   position: relative;
   z-index: 10;
 }
+
+/* Animation helpers */
+.fade-in { opacity: 0; transform: translateY(12px); transition: all 520ms cubic-bezier(.2,.8,.2,1); }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+.slide-up { transform: translateY(14px); opacity:0; transition: all 420ms ease-out; }
+.slide-up.visible { transform: translateY(0); opacity:1; }
+.btn-cta.pressed, .save-btn.pressed { transform: translateY(2px) scale(.995); box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: transform 180ms; }
+
 
 .site-shell-footer a { 
   color:#fff; 

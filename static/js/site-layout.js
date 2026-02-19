@@ -65,16 +65,21 @@
     { href: '/index.html', label: 'الرئيسية' },
     { href: '/about.html', label: 'من أنا' },
     { href: '/articles.html', label: 'المقالات' },
-    { href: '/courses.html', label: 'الدورات' },
+    // { href: '/courses.html', label: 'الدورات' }, // commented per request
     { href: '/timeline.html', label: 'الخط الزمني' },
     { href: '/dictionary.html', label: 'القاموس' },
-    { href: '/influencers.html', label: 'المؤثرون' }
+    // { href: '/influencers.html', label: 'المؤثرون' }, // commented per request
+    // removed: shop, products, tags, search entries to simplify navbar
   ];
   const current = location.pathname.replace(/\/$/, '') || '/index.html';
   const links = navItems.map(item => `<a class="${current === item.href ? 'active' : ''}" href="${item.href}">${item.label}</a>`).join('');
 
   const headerTarget = document.getElementById('site-header');
   if (headerTarget) {
+    /*
+      New creative header was added earlier. User requested to deactivate it using comments.
+      The block below is intentionally commented out to restore the previous simple header behavior.
+
     headerTarget.innerHTML = `
       <header class="site-shell-header">
         <div class="inner site-top">
@@ -113,6 +118,11 @@
         }
       });
     }
+
+    */
+
+    // Fallback simple header to keep site usable
+    headerTarget.innerHTML = '<header class="site-shell-header"><div class="inner site-top"><a class="site-brand" href="/index.html"><span>أحمد ابو المجد</span></a><nav class="site-links">' + links + '</nav><div class="site-actions"><a class="btn-account" href="/admin/login.php"><i class="fas fa-user"></i></a></div></div></header>';
   }
 
   const footerTarget = document.getElementById('site-footer');
