@@ -226,12 +226,34 @@ try {
         $review_id = $db->lastInsertId();
 
         // Update rating average
+        // Handle uploaded images (optional)
         $ratingStmt = $db->prepare("
             SELECT AVG(rating) as avg_rating, COUNT(*) as count FROM reviews
             WHERE reviewable_type = ? AND reviewable_id = ? AND status = 'approved'
         ");
         $ratingStmt->execute([$reviewable_type, $reviewable_id]);
         $ratingData = $ratingStmt->fetch();
+
+        if (!empty($_FILES['images'])) {
+            $uploadDir = __DIR__ . '/../static/uploads/reviews';
+            if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
+            $files = rearray_files($_FILES['images']);
+            $imgStmt = $db->prepare("INSERT INTO review_images (review_id, image_url) VALUES (?, ?)");
+            foreach ($files as $file) {
+                if ($file['error'] !== UPLOAD_ERR_OK) continue;
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($finfo, $file['tmp_name']);
+                finfo_close($finfo);
+                if (!in_array($mime, ['image/jpeg','image/png','image/webp'])) continue;
+                $ext = $mime === 'image/png' ? 'png' : ($mime === 'image/webp' ? 'webp' : 'jpg');
+                $filename = uniqid('rimg_') . '.' . $ext;
+                $dest = $uploadDir . '/' . $filename;
+                if (move_uploaded_file($file['tmp_name'], $dest)) {
+                    $publicUrl = '/static/uploads/reviews/' . $filename;
+                    $imgStmt->execute([$review_id, $publicUrl]);
+                }
+            }
+        }
 
         if ($reviewable_type === 'product') {
             $updateStmt = $db->prepare("UPDATE products SET rating_average = ?, rating_count = ? WHERE id = ?");
@@ -311,4 +333,17 @@ function errorResponse($message, $code = 400) {
 
 function unauthorized() {
     return errorResponse('Unauthorized', 403);
+}
+
+// Helper to normalize PHP file upload arrays
+function rearray_files(&$file_post) {
+    $files = array();
+    $file_count = is_array($file_post['name']) ? count($file_post['name']) : 0;
+    $file_keys = array_keys($file_post);
+    for ($i=0; $i<$file_count; $i++) {
+        foreach ($file_keys as $key) {
+            $files[$i][$key] = $file_post[$key][$i];
+        }
+    }
+    return $files;
 }
