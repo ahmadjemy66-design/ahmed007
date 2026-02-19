@@ -591,7 +591,7 @@
         // Fetch influencers
         async function loadInfluencers() {
             try {
-                const response = await fetch('api/influencers.php?action=list');
+                const response = await fetch('/api/influencers.php?action=list');
                 const data = await response.json();
                 
                 if (data.success) {
@@ -692,7 +692,7 @@
                         </div>
 
                         <div class="influencer-actions">
-                            <button class="btn btn-primary" onclick="openContact(${influencer.id}, '${influencer.name_ar}')">
+                            <button class="btn btn-primary" onclick="openContact(${influencer.id})">
                                 <i class="fas fa-envelope"></i> تواصل
                             </button>
                             ${influencer.platform_url ? `
@@ -707,8 +707,9 @@
         }
 
         // Open contact modal
-        function openContact(influencerId, name) {
+        function openContact(influencerId) {
             currentInfluencer = allInfluencers.find(i => i.id === influencerId);
+            const name = currentInfluencer ? (currentInfluencer.name_ar || currentInfluencer.name || '') : '';
             document.getElementById('contactForm').reset();
             document.getElementById('contactModal').classList.add('active');
             document.querySelector('.modal-content h2').textContent = `التواصل مع ${name}`;
@@ -733,7 +734,7 @@
                 formData.append('action', 'contact');
                 formData.append('influencer_id', currentInfluencer.id);
 
-                const response = await fetch('api/influencers.php', {
+                const response = await fetch('/api/influencers.php', {
                     method: 'POST',
                     body: formData
                 });

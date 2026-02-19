@@ -149,6 +149,20 @@ body {
   flex-wrap: wrap;
 }
 
+.site-actions { display:flex; gap:12px; align-items:center; }
+.site-search { padding:8px 12px; border-radius:8px; border:1px solid rgba(8,19,123,0.08); min-width:180px; }
+.btn-cta { background: linear-gradient(135deg,var(--site-primary),var(--site-secondary)); color:#fff; padding:8px 14px; border-radius:10px; text-decoration:none; font-weight:700; }
+.btn-cta.ghost { background: transparent; border:2px solid rgba(255,255,255,0.12); color:#fff; }
+.btn-account { color:var(--site-primary); text-decoration:none; padding:6px 8px; border-radius:8px; }
+
+/* Shared homepage hero */
+.shared-hero { background: linear-gradient(135deg, rgba(8,19,123,0.95), rgba(79,9,167,0.9)); color:#fff; padding:60px 0; margin-bottom:30px; }
+.shared-hero .inner { max-width:1100px; margin:0 auto; padding:0 18px; text-align:center; }
+.shared-hero h1 { font-size:2rem; margin-bottom:8px; }
+.shared-hero p { opacity:0.95; margin-bottom:14px; }
+.hero-ctas { display:inline-flex; gap:10px; }
+
+
 .site-links { 
   display:flex; 
   flex-wrap:wrap; 

@@ -75,7 +75,44 @@
 
   const headerTarget = document.getElementById('site-header');
   if (headerTarget) {
-    headerTarget.innerHTML = `<header class="site-shell-header"><div class="inner"><div class="site-top"><a class="site-brand" href="/index.html"><i class="fas fa-sparkles"></i><span>أحمد أبو المجد</span></a><nav class="site-links">${links}</nav></div></div></header>`;
+    headerTarget.innerHTML = `
+      <header class="site-shell-header">
+        <div class="inner site-top">
+          <a class="site-brand" href="/index.html"><i class="fas fa-sparkles"></i><span>أحمد أبو المجد</span></a>
+          <nav class="site-links">${links}</nav>
+          <div class="site-actions">
+            <input id="siteSearch" class="site-search" placeholder="ابحث في الموقع..." aria-label="بحث" />
+            <a class="btn-cta" href="/shop.html">تسوّق الآن</a>
+            <a class="btn-account" href="/admin/login.php"><i class="fas fa-user"></i></a>
+          </div>
+        </div>
+      </header>
+      `;
+
+    // Small hero on homepage only
+    if (current === '/index.html' || current === '/' ) {
+      const heroHtml = `
+        <section class="shared-hero">
+          <div class="inner">
+            <h1>مرحباً بكم في موقعنا — تصميم إبداعي وتجربة متميزة</h1>
+            <p>نقدّم محتوى، دورات، ومجتمعاً نابضاً. انطلق الآن.</p>
+            <div class="hero-ctas"><a class="btn-cta" href="/courses.html">ابدأ التعلم</a><a class="btn-cta ghost" href="/influencers.html">اعرف المؤثرين</a></div>
+          </div>
+        </section>
+      `;
+      headerTarget.insertAdjacentHTML('afterend', heroHtml);
+    }
+
+    // Wire up search box
+    const searchEl = document.getElementById('siteSearch');
+    if (searchEl) {
+      searchEl.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const q = searchEl.value.trim();
+          if (q) location.href = '/articles.html?search=' + encodeURIComponent(q);
+        }
+      });
+    }
   }
 
   const footerTarget = document.getElementById('site-footer');
