@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>تفاصيل الطلب</title>
+  <link rel="stylesheet" href="/static/css/site-layout.css">
+  <style>
+    .shell{max-width:1000px;margin:90px auto;padding:18px}
+    .card{background:#fff;border-radius:12px;padding:18px}
+    .item-row{display:flex;gap:12px;align-items:center;border-bottom:1px solid #f0f0f0;padding:10px 0}
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main class="shell">
+    <div class="card">
+      <h2>تفاصيل الطلب</h2>
+      <div id="orderContainer">جاري التحميل...</div>
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/static/js/site-layout.js"></script>
+  <script>
+    async function loadOrder(){
+      const params = new URLSearchParams(location.search);
+      const id = params.get('order_id');
+      if (!id) { document.getElementById('orderContainer').innerHTML = '<p>معرف الطلب مفقود</p>'; return; }
+      try{
+        const res = await fetch('/api/products.php?action=get_order&order_id='+encodeURIComponent(id));
+        const data = await res.json();
+        const c = document.getElementById('orderContainer');
+        if (!data.success){ c.innerHTML = '<p>خطأ أو غير مصرح</p>'; return; }
+        const o = data.data;
+        c.innerHTML = `<div><strong>رقم الطلب:</strong> ${o.order_number} <br><strong>المبلغ:</strong> ${o.total_amount} ر.س <br><strong>الحالة:</strong> ${o.status}</div><hr>`;
+        if (o.items && o.items.length) {
+          o.items.forEach(it => {
+            const div = document.createElement('div');
+            div.className = 'item-row';
+            div.innerHTML = `<div style="width:80px"><img src="${it.product_image || '/static/img/placeholder.png'}" style="width:80px;height:60px;object-fit:cover"></div><div style="flex:1"><strong>${it.product_name_ar || it.product_name}</strong><div>كمية: ${it.quantity}</div></div><div>${it.subtotal} ر.س</div>`;
+            c.appendChild(div);
+          });
+        }
+      }catch(e){ console.error(e); document.getElementById('orderContainer').innerHTML = '<p>خطأ في تحميل تفاصيل الطلب</p>'; }
+    }
+    document.addEventListener('DOMContentLoaded', loadOrder);
+  </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>إضافة مراجعة</title>
+  <link rel="stylesheet" href="/static/css/site-layout.css">
+  <style>
+    .shell{max-width:900px;margin:90px auto;padding:18px}
+    .card{background:#fff;padding:18px;border-radius:10px}
+    label{display:block;margin-bottom:6px;font-weight:700}
+    textarea,input,select{width:100%;padding:10px;border-radius:6px;border:1px solid #e5e7eb;margin-bottom:12px}
+    .btn-primary{background:linear-gradient(135deg,var(--site-primary),var(--site-secondary));color:#fff;padding:10px 14px;border:none;border-radius:8px}
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main class="shell">
+    <div class="card">
+      <h2>أضف مراجعتك</h2>
+      <p id="note" style="color:#666">يمكنك إضافة مراجعة لمنتج/مقال/خدمة. تحتاج لتسجيل الدخول.</p>
+      <form id="reviewForm">
+        <label>نوع المحتوى</label>
+        <select id="reviewable_type" name="reviewable_type">
+          <option value="product">منتج</option>
+          <option value="article">مقال</option>
+          <option value="service">خدمة</option>
+          <option value="dictionary">قاموس</option>
+        </select>
+        <label>معرف المحتوى (ID)</label>
+        <input id="reviewable_id" name="reviewable_id" placeholder="ضع الرقم أو المعرف هنا">
+        <label>التقييم (1-5)</label>
+        <select id="rating" name="rating">
+          <option value="5">5</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
+          <option value="1">1</option>
+        </select>
+        <label>عنوان المراجعة</label>
+        <input id="title_ar" name="title_ar">
+        <label>المحتوى</label>
+        <textarea id="content_ar" name="content_ar" rows="6"></textarea>
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <button type="button" class="btn-primary" onclick="submitReview()">إرسال المراجعة</button>
+        </div>
+      </form>
+      <div id="result" style="margin-top:12px"></div>
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/static/js/site-layout.js"></script>
+  <script>
+    // Pre-fill from query params if provided
+    const params = new URLSearchParams(location.search);
+    if (params.get('type')) document.getElementById('reviewable_type').value = params.get('type');
+    if (params.get('id')) document.getElementById('reviewable_id').value = params.get('id');
+
+    async function submitReview(){
+      const form = new FormData();
+      form.append('action','create_review');
+      form.append('reviewable_type', document.getElementById('reviewable_type').value);
+      form.append('reviewable_id', document.getElementById('reviewable_id').value);
+      form.append('rating', document.getElementById('rating').value);
+      form.append('title_ar', document.getElementById('title_ar').value);
+      form.append('content_ar', document.getElementById('content_ar').value);
+      try{
+        const res = await fetch('/api/reviews.php', { method: 'POST', body: form });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('result').innerHTML = '<div style="color:green">تم إرسال المراجعة بنجاح (قيد المراجعة)</div>';
+          document.getElementById('reviewForm').reset();
+        } else {
+          document.getElementById('result').innerHTML = '<div style="color:red">حدث خطأ: ' + (data.error || data.message || 'غير معروف') + '</div>';
+        }
+      }catch(e){ console.error(e); document.getElementById('result').innerHTML = '<div style="color:red">خطأ في الإرسال</div>'; }
+    }
+  </script>
+</body>
+</html>

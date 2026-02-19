@@ -7,6 +7,9 @@ try {
         if (!isset($_SESSION['user_id'])) {
             throw new Exception('User not logged in', 401);
         }
+        if (!isUserActive()) {
+            throw new Exception('User not allowed', 403);
+        }
         $stmt = $db->prepare("SELECT id, full_name, email, phone, country, newsletter_subscribed, email_verified FROM users WHERE id = ? LIMIT 1");
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch();
@@ -17,6 +20,7 @@ try {
 
     if ($action === 'update') {
         if (!isset($_SESSION['user_id'])) throw new Exception('User not logged in', 401);
+        if (!isUserActive()) throw new Exception('User not allowed', 403);
         $full_name = sanitize($_POST['full_name'] ?? '');
         $phone = sanitize($_POST['phone'] ?? '');
         $country = sanitize($_POST['country'] ?? '');

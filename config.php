@@ -108,6 +108,20 @@ function isAdmin() {
     return isset($_SESSION['admin_id']) && isset($_SESSION['admin_role']);
 }
 
+function isUserActive() {
+    if (!isset($_SESSION['user_id'])) return false;
+    global $db;
+    try {
+        $stmt = $db->prepare("SELECT status FROM users WHERE id = ? LIMIT 1");
+        $stmt->execute([$_SESSION['user_id']]);
+        $row = $stmt->fetch();
+        if (!$row) return false;
+        return ($row['status'] ?? 'active') === 'active';
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
 function requireAdmin() {
     if (!isAdmin()) {
         header('Location: /admin/errors/401.php');

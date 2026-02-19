@@ -183,6 +183,10 @@ try {
             throw new Exception('User not logged in');
         }
 
+        if (!isUserActive()) {
+            throw new Exception('User not allowed to create reviews (account not active)', 403);
+        }
+
         $reviewable_type = $_POST['reviewable_type'] ?? null;
         $reviewable_id = $_POST['reviewable_id'] ?? null;
         $title_ar = $_POST['title_ar'] ?? null;
