@@ -775,6 +775,35 @@ CREATE TABLE review_images (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ===================================
+-- 30. PAYMENT TRANSACTIONS TABLE
+-- For Payment Gateway Integration (Stripe, PayPal, Fawry, Thawani, Apple Pay, etc.)
+-- ===================================
+CREATE TABLE payment_transactions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    user_id INT,
+    payment_method VARCHAR(50) NOT NULL,
+    transaction_id VARCHAR(255) UNIQUE NOT NULL,
+    amount DECIMAL(12, 2) NOT NULL,
+    currency VARCHAR(3) DEFAULT 'SAR',
+    status ENUM('pending', 'paid', 'failed', 'refunded', 'cancelled') DEFAULT 'pending',
+    payment_gateway VARCHAR(50),
+    response_data LONGTEXT,
+    refund_amount DECIMAL(12, 2) DEFAULT 0,
+    refund_reason VARCHAR(255),
+    attempts INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_transaction_id (transaction_id),
+    INDEX idx_order_id (order_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status),
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===================================
 -- 31. TAG GROUPS TABLE
 -- ===================================
 CREATE TABLE tag_groups (
