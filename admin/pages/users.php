@@ -173,6 +173,18 @@ $users = $usersStmt->fetchAll();
                                         <button class="btn-small" onclick="editUser(<?= $user['id'] ?>)" title="تعديل">
                                             <i class="fas fa-edit"></i>
                                         </button>
+                                        <?php if ($user['status'] !== 'banned'): ?>
+                                        <button class="btn-small" onclick="banUser(<?= $user['id'] ?>, '<?= htmlspecialchars($user['full_name']) ?>')" title="حظر">
+                                            <i class="fas fa-user-slash"></i>
+                                        </button>
+                                        <?php else: ?>
+                                        <button class="btn-small" onclick="unbanUser(<?= $user['id'] ?>)" title="إلغاء الحظر">
+                                            <i class="fas fa-user-check"></i>
+                                        </button>
+                                        <?php endif; ?>
+                                        <button class="btn-small" onclick="openRoleMenu(<?= $user['id'] ?>)" title="تغيير الدور">
+                                            <i class="fas fa-user-cog"></i>
+                                        </button>
                                         <button class="btn-small" onclick="deleteUser(<?= $user['id'] ?>, '<?= htmlspecialchars($user['full_name']) ?>')" title="حذف">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -329,6 +341,47 @@ $users = $usersStmt->fetchAll();
                 }
             });
         });
+    </script>
+    <script>
+        function banUser(id, name) {
+            Swal.fire({
+                title: 'هل تريد حظر المستخدم؟',
+                text: `سيتم حظر المستخدم "${name}"`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، احظره',
+                cancelButtonText: 'إلغاء'
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    fetch('/admin/ajax/users.php?action=ban', {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+                        body: `id=${id}`
+                    }).then(r=>r.json()).then(d=>{ if (d.success) Swal.fire('تم','تم الحظر','success').then(()=>location.reload()); else Swal.fire('خطأ',d.message,'error'); });
+                }
+            });
+        }
+
+        function unbanUser(id) {
+            fetch('/admin/ajax/users.php?action=unban', { method: 'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: `id=${id}` })
+            .then(r=>r.json()).then(d=>{ if (d.success) Swal.fire('تم','تم إلغاء الحظر','success').then(()=>location.reload()); else Swal.fire('خطأ',d.message,'error'); });
+        }
+
+        function openRoleMenu(id) {
+            Swal.fire({
+                title: 'اختر الدور',
+                input: 'select',
+                inputOptions: { 'user':'مستخدم', 'moderator':'مشرف', 'admin':'مشرف عام' },
+                inputPlaceholder: 'اختر دور',
+                showCancelButton: true
+            }).then(res => {
+                if (res.isConfirmed) {
+                    const role = res.value;
+                    fetch('/admin/ajax/users.php?action=set_role', { method: 'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: `id=${id}&role=${role}` })
+                    .then(r=>r.json()).then(d=>{ if (d.success) Swal.fire('تم',d.message,'success').then(()=>location.reload()); else Swal.fire('خطأ',d.message,'error'); });
+                }
+            });
+        }
     </script>
 </body>
 </html>

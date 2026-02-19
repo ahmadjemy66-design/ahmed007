@@ -130,6 +130,67 @@ try {
             }
             break;
 
+        case 'ban':
+            $id = intval($_POST['id'] ?? 0);
+            $stmt = $db->prepare("SELECT full_name FROM users WHERE id = :id");
+            $stmt->execute([':id' => $id]);
+            $user = $stmt->fetch();
+            if (!$user) { $response['message'] = 'المستخدم غير موجود'; break; }
+            $upd = $db->prepare("UPDATE users SET status = 'banned' WHERE id = :id");
+            if ($upd->execute([':id' => $id])) {
+                logActivity($db, $_SESSION['admin_id'], 'user_banned', "حظر مستخدم: {$user['full_name']}", 'users', $id);
+                $response['success'] = true;
+                $response['message'] = 'تم حظر المستخدم';
+            }
+            break;
+
+        case 'unban':
+            $id = intval($_POST['id'] ?? 0);
+            $stmt = $db->prepare("SELECT full_name FROM users WHERE id = :id");
+            $stmt->execute([':id' => $id]);
+            $user = $stmt->fetch();
+            if (!$user) { $response['message'] = 'المستخدم غير موجود'; break; }
+            $upd = $db->prepare("UPDATE users SET status = 'active' WHERE id = :id");
+            if ($upd->execute([':id' => $id])) {
+                logActivity($db, $_SESSION['admin_id'], 'user_unbanned', "إلغاء حظر مستخدم: {$user['full_name']}", 'users', $id);
+                $response['success'] = true;
+                $response['message'] = 'تم إلغاء الحظر';
+            }
+            break;
+
+        case 'suspend':
+            $id = intval($_POST['id'] ?? 0);
+            $duration = intval($_POST['duration'] ?? 0); // days optional
+            $stmt = $db->prepare("SELECT full_name FROM users WHERE id = :id");
+            $stmt->execute([':id' => $id]);
+            $user = $stmt->fetch();
+            if (!$user) { $response['message'] = 'المستخدم غير موجود'; break; }
+            $status = 'suspended';
+            $upd = $db->prepare("UPDATE users SET status = :status WHERE id = :id");
+            if ($upd->execute([':status' => $status, ':id' => $id])) {
+                logActivity($db, $_SESSION['admin_id'], 'user_suspended', "تعليق مستخدم: {$user['full_name']}", 'users', $id);
+                $response['success'] = true;
+                $response['message'] = 'تم تعليق المستخدم';
+            }
+            break;
+
+        case 'set_role':
+            $id = intval($_POST['id'] ?? 0);
+            $role = sanitize($_POST['role'] ?? 'user');
+            $allowed = ['user','moderator','admin'];
+            if (!in_array($role, $allowed)) { $response['message'] = 'دور غير صالح'; break; }
+            $stmt = $db->prepare("SELECT full_name FROM users WHERE id = :id");
+            $stmt->execute([':id' => $id]);
+            $user = $stmt->fetch();
+            if (!$user) { $response['message'] = 'المستخدم غير موجود'; break; }
+            $upd = $db->prepare("UPDATE users SET role = :role WHERE id = :id");
+            if ($upd->execute([':role' => $role, ':id' => $id])) {
+                logActivity($db, $_SESSION['admin_id'], 'user_role_changed', "تغيير دور المستخدم: {$user['full_name']} → {$role}", 'users', $id);
+                $response['success'] = true;
+                $response['message'] = 'تم تحديث دور المستخدم';
+            }
+            break;
+
         default:
             $response['message'] = 'إجراء غير صحيح';
     }
