@@ -2474,12 +2474,24 @@
                 const phone = settings.site_phone || '+966';
                 const whatsapp = settings.whatsapp_number || '+966';
 
-                // Update contact links
-                document.querySelector('.contact-item:nth-child(1) a').href = `mailto:${email}`;
-                document.querySelector('.contact-item:nth-child(1) a').textContent = email;
-                document.querySelector('.contact-item:nth-child(2) a').href = `tel:${phone}`;
-                document.querySelector('.contact-item:nth-child(2) a').textContent = phone;
-                document.getElementById('whatsappBtn').href = `https://wa.me/${whatsapp.replace(/[^\d+]/g, '')}`;
+                // Update contact links safely
+                const emailLink = document.querySelector('.contact-item:nth-child(1) a');
+                const phoneLink = document.querySelector('.contact-item:nth-child(2) a');
+                const whatsappBtn = document.getElementById('whatsappBtn');
+
+                if (emailLink) {
+                    emailLink.href = `mailto:${email}`;
+                    emailLink.textContent = email;
+                }
+
+                if (phoneLink) {
+                    phoneLink.href = `tel:${phone}`;
+                    phoneLink.textContent = phone;
+                }
+
+                if (whatsappBtn) {
+                    whatsappBtn.href = `https://wa.me/${whatsapp.replace(/[^\d+]/g, '')}`;
+                }
             } catch (e) {
                 console.error('Failed to load contact info:', e);
             }
@@ -2493,22 +2505,35 @@
             try {
                 // Load review statistics
                 const statsRes = await fetch('/api/reviews.php?action=get_review_stats&reviewable_type=article');
-                const statsData = await statsRes.json();
-                
-                if (statsData.success && statsData.data) {
-                    const stats = statsData.data;
-                    displayReviewStats(stats);
+                if (statsRes.ok) {
+                    const statsData = await statsRes.json();
+                    if (statsData.success && statsData.data) {
+                        const stats = statsData.data;
+                        displayReviewStats(stats);
+                    }
+                } else {
+                    console.warn('Review stats request failed', statsRes.status);
                 }
 
                 // Load actual reviews
                 const reviewsRes = await fetch('/api/reviews.php?action=get_reviews_with_content&reviewable_type=article&limit=10');
-                const reviewsData = await reviewsRes.json();
-                
-                if (reviewsData.success && Array.isArray(reviewsData.data)) {
-                    allReviews = reviewsData.data;
-                    displayReviewCarousel();
+                if (reviewsRes.ok) {
+                    const reviewsData = await reviewsRes.json();
+                    if (reviewsData.success && Array.isArray(reviewsData.data)) {
+                        allReviews = reviewsData.data;
+                        displayReviewCarousel();
+                    } else {
+                        const reviewsCarousel = document.getElementById('reviewsCarousel');
+                        if (reviewsCarousel) {
+                            reviewsCarousel.innerHTML = '<div class="empty-state"><p>لا توجد تقييمات متاحة حالياً</p></div>';
+                        }
+                    }
                 } else {
-                    document.getElementById('reviewsCarousel').innerHTML = '<div class="empty-state"><p>لا توجد تقييمات متاحة حالياً</p></div>';
+                    console.warn('Reviews request failed', reviewsRes.status);
+                    const reviewsCarousel = document.getElementById('reviewsCarousel');
+                    if (reviewsCarousel) {
+                        reviewsCarousel.innerHTML = '<div class="empty-state"><p>⚠️ خطأ في تحميل التقييمات</p></div>';
+                    }
                 }
             } catch (e) {
                 console.error('Failed to load reviews:', e);

@@ -465,15 +465,15 @@
 
     // Preload critical resources
     const criticalResources = [
-      '/static/css/site-layout.css',
-      '/static/js/site-layout.js'
+      { href: '/static/css/site-layout.css', as: 'style' },
+      { href: '/static/js/site-layout.js', as: 'script' }
     ];
 
     criticalResources.forEach(resource => {
       const link = document.createElement('link');
       link.rel = 'preload';
-      link.href = resource;
-      link.as = 'style';
+      link.href = resource.href;
+      link.as = resource.as;
       document.head.appendChild(link);
     });
   }
