@@ -747,6 +747,7 @@
             <div class="modal-body">
                 <form id="serviceForm" novalidate>
                     <input type="hidden" id="serviceId" name="serviceId">
+                    <input type="hidden" id="icon" name="icon" value="fa-star">
 
                     <div class="form-grid">
                         <!-- Basic Information -->
@@ -1035,6 +1036,7 @@
 
             const formData = new FormData($('#serviceForm')[0]);
             const action = currentServiceId ? 'update' : 'create';
+            formData.append('action', action);
 
             // Show loading
             const saveBtn = $('.modal-actions .btn-primary');
