@@ -852,6 +852,167 @@
             }
         }
 
+        /* Dictionary Section */
+        .dictionary-section {
+            background: linear-gradient(135deg, rgba(8, 19, 123, 0.03) 0%, rgba(79, 9, 167, 0.03) 100%);
+        }
+
+        .dictionary-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-top: 50px;
+            align-items: center;
+        }
+
+        .dictionary-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 30px 25px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border-left: 4px solid var(--secondary-purple);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.8rem;
+            margin: 0 auto 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: var(--neutral-dark);
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .dictionary-preview {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+        }
+
+        .preview-words {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .preview-word {
+            background: var(--neutral-light);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border-right: 4px solid var(--secondary-purple);
+            transition: var(--transition);
+        }
+
+        .preview-word:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .word-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .word-arabic {
+            font-size: 1rem;
+            color: var(--neutral-dark);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .word-difficulty {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .difficulty-beginner {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty-intermediate {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty-advanced {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .dictionary-cta {
+            text-align: center;
+        }
+
+        .dictionary-cta p {
+            color: var(--neutral-dark);
+            opacity: 0.7;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+
+        /* Responsive Dictionary */
+        @media (max-width: 1024px) {
+            .dictionary-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .dictionary-preview {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dictionary-features {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-words {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card {
+                padding: 25px 20px;
+            }
+        }
+
         /* About Section */
         .about-section {
             background: linear-gradient(135deg, rgba(8, 19, 123, 0.05) 0%, rgba(79, 9, 167, 0.05) 100%);
@@ -1668,6 +1829,7 @@
                 <li><a href="#about">من أنا</a></li>
                 <li><a href="#services">الخدمات</a></li>
                 <li><a href="#sectors">القطاعات</a></li>
+                <li><a href="#dictionary">القاموس</a></li>
                 <li><a href="#news">الأخبار</a></li>
                 <li><a href="#contact">تواصل</a></li>
             </ul>
@@ -1768,6 +1930,70 @@
                 </div>
             </div>
             <div id="sectorContents"></div>
+        </div>
+    </section>
+
+    <!-- Dictionary Section -->
+    <section id="dictionary" class="dictionary-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>القاموس العربي</h2>
+                <p>تعلم الكلمات والمصطلحات المهمة في مجال التسويق والأعمال</p>
+            </div>
+
+            <div class="dictionary-content">
+                <div class="dictionary-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3>البحث المتقدم</h3>
+                        <p>ابحث عن الكلمات والمصطلحات بسهولة مع فلاتر متقدمة</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3>مستويات التعلم</h3>
+                        <p>كلمات مصنفة حسب المستوى من المبتدئ إلى المتقدم</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <h3>التصنيفات</h3>
+                        <p>مصطلحات منظمة حسب المجالات والتخصصات</p>
+                    </div>
+                </div>
+
+                <div class="dictionary-preview">
+                    <div class="preview-words">
+                        <div class="preview-word">
+                            <div class="word-title">Marketing Mix</div>
+                            <div class="word-arabic">مزيج التسويق</div>
+                            <div class="word-difficulty difficulty-intermediate">متوسط</div>
+                        </div>
+                        <div class="preview-word">
+                            <div class="word-title">ROI</div>
+                            <div class="word-arabic">العائد على الاستثمار</div>
+                            <div class="word-difficulty difficulty-advanced">متقدم</div>
+                        </div>
+                        <div class="preview-word">
+                            <div class="word-title">Branding</div>
+                            <div class="word-arabic">بناء العلامة التجارية</div>
+                            <div class="word-difficulty difficulty-beginner">مبتدئ</div>
+                        </div>
+                    </div>
+
+                    <div class="dictionary-cta">
+                        <a href="dictionary.html" class="btn btn-primary">
+                            <span>استكشف القاموس</span>
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                        <p>اكثر من 500 مصطلح وكلمة متخصصة</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 

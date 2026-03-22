@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اختبار تحسينات تجربة المستخدم - أحمد أبو المجد</title>
+  <link rel="stylesheet" href="/static/css/site-layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main class="container">
+    <section class="hero-section">
+      <div class="inner">
+        <h1>اختبار تحسينات تجربة المستخدم</h1>
+        <p>تم تحسين المنصة بميزات حديثة لتحسين تجربة المستخدم</p>
+      </div>
+    </section>
+
+    <section class="features-section">
+      <div class="inner">
+        <h2>الميزات الجديدة</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <i class="fas fa-mobile-alt"></i>
+            <h3>تصميم متجاوب</h3>
+            <p>يعمل الموقع بشكل مثالي على جميع الأجهزة</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-mouse-pointer"></i>
+            <h3>مؤشر مخصص</h3>
+            <p>تجربة تفاعلية مع المؤشر المخصص</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-bell"></i>
+            <h3>إشعارات ذكية</h3>
+            <p>نظام إشعارات متقدم للتواصل مع المستخدم</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-check-circle"></i>
+            <h3>تحقق فوري</h3>
+            <p>التحقق من صحة البيانات أثناء الكتابة</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-spinner"></i>
+            <h3>مؤشرات التحميل</h3>
+            <p>عرض حالة التحميل للعمليات الطويلة</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-universal-access"></i>
+            <h3>إمكانية الوصول</h3>
+            <p>دعم كامل لتقنيات المساعدة</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-section">
+      <div class="inner">
+        <h2>تجربة الميزات</h2>
+
+        <!-- Toast Notifications Demo -->
+        <div class="demo-group">
+          <h3>إشعارات التوست</h3>
+          <div class="btn-group">
+            <button class="btn btn-success" onclick="SiteUX.showToast('تم الحفظ بنجاح!', 'success')">نجح</button>
+            <button class="btn btn-danger" onclick="SiteUX.showToast('حدث خطأ في الحفظ', 'error')">خطأ</button>
+            <button class="btn btn-warning" onclick="SiteUX.showToast('تحذير: تحقق من البيانات', 'warning')">تحذير</button>
+            <button class="btn btn-info" onclick="SiteUX.showToast('معلومة مهمة', 'info')">معلومة</button>
+          </div>
+        </div>
+
+        <!-- Loading States Demo -->
+        <div class="demo-group">
+          <h3>مؤشرات التحميل</h3>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="showLoadingDemo()">عرض التحميل</button>
+            <button class="btn btn-secondary" onclick="SiteUX.hideLoading()">إخفاء التحميل</button>
+          </div>
+        </div>
+
+        <!-- Form Validation Demo -->
+        <div class="demo-group">
+          <h3>التحقق من النماذج</h3>
+          <form class="demo-form needs-validation" novalidate>
+            <div class="form-group">
+              <label for="demoName">الاسم (مطلوب)</label>
+              <input type="text" id="demoName" class="form-input" required minlength="2">
+              <div class="form-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="demoEmail">البريد الإلكتروني</label>
+              <input type="email" id="demoEmail" class="form-input" required>
+              <div class="form-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="demoUrl">الموقع الإلكتروني</label>
+              <input type="url" id="demoUrl" class="form-input">
+              <div class="form-error"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">إرسال</button>
+          </form>
+        </div>
+
+        <!-- Mobile Menu Demo -->
+        <div class="demo-group">
+          <h3>القائمة المحمولة</h3>
+          <p>جرب القائمة المحمولة على الشاشات الصغيرة أو انقر على زر القائمة في الهيدر</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/static/js/site-layout.js"></script>
+  <script>
+    function showLoadingDemo() {
+      SiteUX.showLoading();
+      setTimeout(() => {
+        SiteUX.hideLoading();
+        SiteUX.showToast('تم الانتهاء من العملية!', 'success');
+      }, 2000);
+    }
+
+    // Add some demo images with lazy loading
+    document.addEventListener('DOMContentLoaded', () => {
+      const demoImages = document.querySelectorAll('.feature-card i');
+      demoImages.forEach(icon => {
+        icon.style.fontSize = '3rem';
+        icon.style.color = 'var(--site-primary)';
+        icon.style.marginBottom = '1rem';
+      });
+    });
+  </script>
+</body>
+</html>

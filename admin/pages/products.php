@@ -19,10 +19,11 @@ $categories = $categoriesStmt->fetchAll();
 <style>
 .products-container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
 .products-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-.btn-add { padding: 12px 25px; background: var(--primary-blue); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-.products-table { width: 100%; border-collapse: collapse; }
-.products-table th { background: var(--bg-light); padding: 15px; text-align: right; font-weight: 600; color: var(--primary-blue); border-bottom: 2px solid var(--border-color); }
-.products-table td { padding: 15px; border-bottom: 1px solid var(--border-color); }
+.btn-add { padding: 12px 25px; background: linear-gradient(135deg, var(--site-primary), var(--site-secondary)); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: transform 0.2s; }
+.btn-add:hover { transform: translateY(-2px); }
+.products-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.products-table th { background: var(--site-bg); padding: 15px; text-align: right; font-weight: 600; color: var(--site-primary); border-bottom: 2px solid rgba(8,19,123,0.08); }
+.products-table td { padding: 15px; border-bottom: 1px solid rgba(8,19,123,0.08); }
 .products-table tr:hover { background: #f9f9f9; }
 .price-badge { padding: 5px 10px; background: #27ae60; color: white; border-radius: 5px; font-weight: 600; }
 .stock-badge { padding: 5px 10px; border-radius: 5px; }
@@ -31,15 +32,39 @@ $categories = $categoriesStmt->fetchAll();
 .stock-badge.high { background: #27ae60; color: white; }
 .rating-badge { color: #f39c12; }
 .action-buttons { display: flex; gap: 10px; }
-.btn-edit, .btn-delete { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.btn-edit, .btn-delete { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.2s; }
 .btn-edit { background: #3498db; color: white; }
+.btn-edit:hover { background: #2980b9; }
 .btn-delete { background: #e74c3c; color: white; }
-.product-form { background: var(--bg-light); padding: 25px; border-radius: 10px; margin-bottom: 20px; display: none; }
+.btn-delete:hover { background: #c0392b; }
+
+/* Enhanced Form Styles */
+.product-form { background: var(--site-bg); padding: 30px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(8,19,123,0.08); display: none; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.form-section { background: white; padding: 20px; border-radius: 10px; border: 1px solid rgba(8,19,123,0.08); }
+.form-section h3 { color: var(--site-primary); margin-bottom: 15px; font-size: 18px; }
 .form-group { margin-bottom: 20px; }
-.form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--primary-blue); }
-.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-family: 'Cairo', sans-serif; }
-.btn-save { padding: 12px 25px; background: var(--primary-blue); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-.btn-cancel { padding: 12px 25px; background: #95a5a6; color: white; border: none; border-radius: 8px; cursor: pointer; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--site-primary); }
+.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-family: 'Cairo', sans-serif; transition: border-color 0.2s; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--site-primary); box-shadow: 0 0 0 3px rgba(8,19,123,0.1); }
+.btn-save { padding: 12px 30px; background: linear-gradient(135deg, var(--site-primary), var(--site-secondary)); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; transition: transform 0.2s; }
+.btn-save:hover { transform: translateY(-2px); }
+.btn-cancel { padding: 12px 30px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+.btn-cancel:hover { background: #5a6268; }
+
+/* Validation Styles */
+.form-group.error input, .form-group.error textarea, .form-group.error select { border-color: #dc3545; }
+.error-message { color: #dc3545; font-size: 14px; margin-top: 5px; display: none; }
+.form-group.error .error-message { display: block; }
+
+/* Loading States */
+.btn-save.loading { opacity: 0.7; cursor: not-allowed; }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .products-header { flex-direction: column; gap: 15px; text-align: center; }
+    .form-grid { grid-template-columns: 1fr; }
+}
 </style>
 
 <div class="products-container">
@@ -49,46 +74,60 @@ $categories = $categoriesStmt->fetchAll();
     </div>
 
     <div class="product-form" id="productForm">
-        <h3>إضافة منتج جديد</h3>
-        <form onsubmit="saveProduct(event)">
-            <div class="form-group">
-                <label>اسم المنتج (عربي) *</label>
-                <input type="text" name="name_ar" required>
+        <h2>إضافة منتج جديد</h2>
+        <form onsubmit="saveProduct(event)" class="product-form-content">
+            <div class="form-grid">
+                <div class="form-section">
+                    <h3>معلومات أساسية</h3>
+                    <div class="form-group">
+                        <label>اسم المنتج (عربي) *</label>
+                        <input type="text" name="name_ar" required>
+                        <div class="error-message">هذا الحقل مطلوب</div>
+                    </div>
+                    <div class="form-group">
+                        <label>الفئة</label>
+                        <select name="category_id">
+                            <option value="">اختر فئة</option>
+                            <?php foreach($categories as $cat): ?>
+                                <option value="<?php echo $cat['id']; ?>"><?php echo sanitize($cat['name_ar']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الوصف</label>
+                        <textarea name="description_ar" rows="4"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>تفاصيل التسعير والمخزون</h3>
+                    <div class="form-group">
+                        <label>السعر *</label>
+                        <input type="number" name="price" step="0.01" required>
+                        <div class="error-message">هذا الحقل مطلوب</div>
+                    </div>
+                    <div class="form-group">
+                        <label>سعر التكلفة</label>
+                        <input type="number" name="cost_price" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>رصيد المخزون</label>
+                        <input type="number" name="stock_quantity" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>نسبة الخصم (%)</label>
+                        <input type="number" name="discount_percent" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox" name="is_featured"> عرض مميز</label>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>الفئة</label>
-                <select name="category_id">
-                    <option value="">اختر فئة</option>
-                    <?php foreach($categories as $cat): ?>
-                        <option value="<?php echo $cat['id']; ?>"><?php echo sanitize($cat['name_ar']); ?></option>
-                    <?php endforeach; ?>
-                </select>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px;">
+                <button type="button" class="btn-cancel" onclick="hideAddProduct()">إلغاء</button>
+                <button type="submit" class="btn-save">حفظ المنتج</button>
             </div>
-            <div class="form-group">
-                <label>السعر *</label>
-                <input type="number" name="price" step="0.01" required>
-            </div>
-            <div class="form-group">
-                <label>سعر التكلفة</label>
-                <input type="number" name="cost_price" step="0.01">
-            </div>
-            <div class="form-group">
-                <label>رصيد المخزون</label>
-                <input type="number" name="stock_quantity" value="0">
-            </div>
-            <div class="form-group">
-                <label>نسبة الخصم (%)</label>
-                <input type="number" name="discount_percent" step="0.01" value="0">
-            </div>
-            <div class="form-group">
-                <label>الوصف</label>
-                <textarea name="description_ar"></textarea>
-            </div>
-            <div class="form-group">
-                <label><input type="checkbox" name="is_featured"> عرض مميز</label>
-            </div>
-            <button type="submit" class="btn-save">حفظ المنتج</button>
-            <button type="button" class="btn-cancel" onclick="hideAddProduct()">إلغاء</button>
         </form>
     </div>
 
@@ -153,22 +192,60 @@ function hideAddProduct() {
 
 function saveProduct(event) {
     event.preventDefault();
+    
+    if (!validateProductForm()) {
+        Swal.fire('خطأ', 'يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+    }
+    
+    const $submitBtn = $('.btn-save');
+    $submitBtn.addClass('loading').prop('disabled', true);
+    
     const formData = new FormData(event.target);
     formData.append('action', 'create_product');
 
-    fetch('/ahmed/api/products.php', {
+    fetch('/api/products.php', {
         method: 'POST',
         body: formData
     })
     .then(r => r.json())
     .then(data => {
+        $submitBtn.removeClass('loading').prop('disabled', false);
+        
         if (data.success) {
-            alert('تم إضافة المنتج بنجاح');
+            Swal.fire('نجح', 'تم إضافة المنتج بنجاح', 'success');
+            hideAddProduct();
             location.reload();
         } else {
-            alert('خطأ: ' + data.error);
+            Swal.fire('خطأ', data.error || 'حدث خطأ غير متوقع', 'error');
         }
+    })
+    .catch(error => {
+        $submitBtn.removeClass('loading').prop('disabled', false);
+        console.error('Error:', error);
+        Swal.fire('خطأ', 'حدث خطأ في الإرسال', 'error');
     });
+}
+
+function validateProductForm() {
+    let isValid = true;
+    $('.form-group').removeClass('error');
+    $('.error-message').hide();
+    
+    const name = $('input[name="name_ar"]').val().trim();
+    const price = $('input[name="price"]').val();
+    
+    if (!name) {
+        $('input[name="name_ar"]').closest('.form-group').addClass('error');
+        isValid = false;
+    }
+    
+    if (!price || price <= 0) {
+        $('input[name="price"]').closest('.form-group').addClass('error');
+        isValid = false;
+    }
+    
+    return isValid;
 }
 
 function editProduct(productId) {

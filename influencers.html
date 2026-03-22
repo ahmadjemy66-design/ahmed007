@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المؤثرون - التعاون والإعلانات</title>
+    <title>شبكة المؤثرين - التعاون والإعلانات</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -14,12 +14,16 @@
             --neutral-dark: #2d3748;
             --accent-gold: #c5a47e;
             --accent-green: #2e7d32;
+            --accent-red: #d32f2f;
             --white: #ffffff;
             --gradient-primary: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            --gradient-gold: linear-gradient(135deg, #c5a47e, #b8945a);
             --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             --border-radius: 16px;
+            --border-radius-lg: 24px;
             --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
@@ -34,12 +38,52 @@
             background: var(--neutral-light);
             color: var(--neutral-dark);
             direction: rtl;
+            cursor: none;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .custom-cursor::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                background: var(--primary-blue);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.5);
+                background: var(--accent-gold);
+            }
         }
 
         /* Header */
@@ -90,81 +134,238 @@
         .hero {
             background: var(--gradient-primary);
             color: var(--white);
-            padding: 60px 0;
+            padding: 80px 0;
             text-align: center;
             margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
         }
 
         .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            font-size: 3.5rem;
             font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            animation: slideInDown 0.8s ease;
         }
 
         .hero p {
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             opacity: 0.95;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
+            animation: slideInUp 0.8s ease;
         }
 
-        /* Filters */
-        .filters {
-            background: var(--white);
-            padding: 25px;
-            border-radius: var(--border-radius);
-            margin-bottom: 40px;
-            box-shadow: var(--shadow-sm);
+        .hero-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            gap: 30px;
+            margin-top: 50px;
+            animation: slideInUp 1s ease;
         }
 
-        .filters select,
-        .filters input {
-            padding: 10px 15px;
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: var(--white);
+            padding: 40px 0;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filters-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 0.95rem;
+        }
+
+        .filter-input,
+        .filter-select {
+            padding: 12px 15px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
             transition: var(--transition);
+            background: var(--white);
         }
 
-        .filters select:focus,
-        .filters input:focus {
+        .filter-input:focus,
+        .filter-select:focus {
             outline: none;
             border-color: var(--primary-blue);
             box-shadow: 0 0 0 3px rgba(8, 19, 123, 0.1);
         }
 
+        .category-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: var(--white);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: var(--gradient-primary);
+            color: var(--white);
+            border-color: var(--primary-blue);
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .sort-label {
+            font-weight: 600;
+            color: var(--neutral-dark);
+        }
+
+        .sort-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .sort-btn:hover,
+        .sort-btn.active {
+            background: var(--primary-blue);
+            color: var(--white);
+            border-color: var(--primary-blue);
+        }
+
         /* Influencers Grid */
         .influencers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
         }
 
         .influencer-card {
             background: var(--white);
             border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-md);
             transition: var(--transition);
-            display: flex;
-            flex-direction: column;
+            position: relative;
+            border: 2px solid transparent;
         }
 
         .influencer-card:hover {
-            transform: translateY(-12px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--secondary-purple);
         }
 
         .influencer-header {
-            height: 200px;
-            background: var(--gradient-primary);
+            height: 220px;
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             overflow: hidden;
         }
 
@@ -172,14 +373,23 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: var(--transition);
         }
 
-        .featured-badge {
+        .influencer-card:hover .influencer-header img {
+            transform: scale(1.05);
+        }
+
+        .influencer-badges {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            background: #ffd700;
-            color: #333;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .badge {
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -189,77 +399,81 @@
             gap: 5px;
         }
 
-        .verification-badge {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 8px 12px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.85rem;
+        .badge-featured {
+            background: #ffd700;
+            color: #333;
         }
 
-        .verification-verified {
-            color: #27ae60;
+        .badge-verified {
+            background: rgba(39, 174, 96, 0.9);
+            color: var(--white);
         }
 
-        .verification-premium {
-            color: #ffd700;
+        .badge-premium {
+            background: rgba(255, 215, 0, 0.9);
+            color: #333;
         }
 
         .influencer-avatar {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             background: var(--white);
             position: absolute;
-            bottom: -40px;
+            bottom: -45px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 3px;
-            box-shadow: var(--shadow-md);
+            padding: 4px;
+            box-shadow: var(--shadow-lg);
+            border: 3px solid var(--white);
+        }
+
+        .influencer-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         .influencer-content {
-            padding: 50px 20px 20px;
+            padding: 60px 25px 25px;
             text-align: center;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
         }
 
         .influencer-name {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary-blue);
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .influencer-category {
             color: var(--secondary-purple);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
+            font-size: 1rem;
+            margin-bottom: 12px;
             font-weight: 600;
         }
 
         .influencer-bio {
-            color: #666;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 15px;
+            color: var(--neutral-dark);
+            opacity: 0.8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .influencer-stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 20px 0;
             border-top: 1px solid #f0f0f0;
             border-bottom: 1px solid #f0f0f0;
-            margin-bottom: 15px;
-            font-size: 0.85rem;
+            margin-bottom: 20px;
         }
 
         .stat-item {
@@ -268,25 +482,36 @@
 
         .stat-value {
             display: block;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--primary-blue);
-            margin-bottom: 3px;
+            margin-bottom: 4px;
+            font-size: 1.1rem;
         }
 
         .stat-label {
             color: #999;
             font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .platform-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
         }
 
         .platform-badge {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            padding: 6px 12px;
-            background: #f0f0f0;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            margin-bottom: 15px;
+            gap: 6px;
+            padding: 8px 14px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--neutral-dark);
+            border: 1px solid #e9ecef;
         }
 
         .platform-badge i {
@@ -295,17 +520,17 @@
 
         .influencer-actions {
             display: flex;
-            gap: 10px;
-            margin-top: auto;
+            gap: 12px;
         }
 
         .btn {
             flex: 1;
-            padding: 10px 15px;
+            padding: 12px 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             text-decoration: none;
@@ -321,18 +546,49 @@
         }
 
         .btn-primary:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
         .btn-secondary {
-            background: #f0f0f0;
+            background: #f8f9fa;
             color: var(--neutral-dark);
-            border: 2px solid #e0e0e0;
+            border: 2px solid #e9ecef;
         }
 
         .btn-secondary:hover {
-            background: #e8e8e8;
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        /* Load More */
+        .load-more-container {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .load-more-btn {
+            padding: 15px 40px;
+            background: var(--gradient-primary);
+            color: var(--white);
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-md);
+        }
+
+        .load-more-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .load-more-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Modal */
@@ -343,69 +599,99 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            backdrop-filter: blur(5px);
         }
 
         .modal.active {
             display: flex;
-            animation: fadeIn 0.3s ease-in;
+            animation: modalFadeIn 0.3s ease-in;
         }
 
-        @keyframes fadeIn {
+        @keyframes modalFadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
 
         .modal-content {
             background: var(--white);
-            border-radius: var(--border-radius);
+            border-radius: var(--border-radius-lg);
             padding: 40px;
-            max-width: 600px;
+            max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
+            position: relative;
+            box-shadow: var(--shadow-xl);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
         .modal-close {
-            float: left;
+            position: absolute;
+            top: 20px;
+            left: 20px;
             font-size: 2rem;
-            font-weight: bold;
-            color: #aaa;
+            color: #999;
             cursor: pointer;
-            border: none;
-            background: none;
-            padding: 0;
-            margin: -10px 0 0 0;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #f8f9fa;
         }
 
         .modal-close:hover {
+            color: var(--accent-red);
+            background: #f1f3f4;
+        }
+
+        .modal h2 {
             color: var(--primary-blue);
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 1.8rem;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
             color: var(--primary-blue);
+            font-weight: 600;
+            font-size: 0.95rem;
         }
 
         .form-group input,
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px 16px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 12px;
             font-family: 'Tajawal', sans-serif;
             font-size: 1rem;
             transition: var(--transition);
+            background: var(--white);
         }
 
         .form-group input:focus,
@@ -417,63 +703,73 @@
         }
 
         .form-group textarea {
+            min-height: 120px;
             resize: vertical;
-            min-height: 100px;
         }
 
-        .btn-submit {
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-submit {
             width: 100%;
-            padding: 12px;
+            padding: 16px;
             background: var(--gradient-primary);
             color: var(--white);
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: 'Tajawal', sans-serif;
+            border-radius: 12px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
+            margin-top: 20px;
         }
 
-        .btn-submit:hover {
-            transform: scale(1.02);
-            box-shadow: var(--shadow-md);
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
-        .btn-submit:disabled {
-            opacity: 0.5;
+        .form-submit:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 80px 20px;
+            color: #999;
+            grid-column: 1 / -1;
         }
 
         .empty-state i {
             font-size: 4rem;
-            color: #ccc;
             margin-bottom: 20px;
+            opacity: 0.5;
         }
 
-        .empty-state p {
-            color: #999;
-            font-size: 1.1rem;
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: var(--neutral-dark);
         }
 
         /* Loading */
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 60px;
+            grid-column: 1 / -1;
         }
 
         .spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid var(--primary-blue);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
         }
@@ -483,68 +779,248 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Success/Error Messages */
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideInDown 0.3s ease;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
+            .influencers-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            }
+
             .hero h1 {
-                font-size: 1.8rem;
+                font-size: 2.8rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .hero {
+                padding: 60px 0;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .filters-container {
+                grid-template-columns: 1fr;
             }
 
             .influencers-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
 
-            .filters {
-                grid-template-columns: 1fr;
+            .influencer-card {
+                max-width: 100%;
+            }
+
+            .influencer-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .influencer-actions {
+                flex-direction: column;
             }
 
             .modal-content {
                 padding: 25px;
+                margin: 10px;
             }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .influencer-name {
+                font-size: 1.3rem;
+            }
+
+            .influencer-stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .stat-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 0;
+            }
+
+            .stat-value {
+                margin-bottom: 0;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease;
         }
     </style>
     <link rel="stylesheet" href="/static/css/site-layout.css">
 </head>
 <body>
+    <div class="custom-cursor" id="customCursor"></div>
     <div id="site-header"></div>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1><i class="fas fa-star"></i> شبكة المؤثرين</h1>
-            <p>تعاون مع أفضل المؤثرين في العالم العربي</p>
+            <div class="hero-content">
+                <h1><i class="fas fa-star"></i> شبكة المؤثرين</h1>
+                <p>تعاون مع أفضل المؤثرين في العالم العربي واكتشف فرص الإعلان والتسويق الرقمي</p>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalInfluencers">500+</span>
+                        <span class="stat-label">مؤثر مسجل</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalFollowers">50M+</span>
+                        <span class="stat-label">متابع مجتمع</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalCollaborations">1000+</span>
+                        <span class="stat-label">تعاون ناجح</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="avgEngagement">4.2%</span>
+                        <span class="stat-label">معدل التفاعل</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label class="filter-label">البحث</label>
+                    <input type="text" id="searchInput" class="filter-input" placeholder="ابحث عن مؤثر...">
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">الفئة</label>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">جميع الفئات</option>
+                        <option value="marketing">التسويق</option>
+                        <option value="fashion">الموضة</option>
+                        <option value="technology">التقنية</option>
+                        <option value="lifestyle">نمط الحياة</option>
+                        <option value="food">الطعام</option>
+                        <option value="travel">السفر</option>
+                        <option value="health">الصحة</option>
+                        <option value="education">التعليم</option>
+                        <option value="entertainment">الترفيه</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">المنصة</label>
+                    <select id="platformFilter" class="filter-select">
+                        <option value="">جميع المنصات</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="twitter">Twitter</option>
+                        <option value="snapchat">Snapchat</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">حالة التحقق</label>
+                    <select id="verificationFilter" class="filter-select">
+                        <option value="">جميع الحالات</option>
+                        <option value="verified">موثق</option>
+                        <option value="premium">بريميوم</option>
+                        <option value="unverified">غير موثق</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="category-filters">
+                <button class="category-btn active" data-category="">الكل</button>
+                <button class="category-btn" data-category="marketing">التسويق</button>
+                <button class="category-btn" data-category="fashion">الموضة</button>
+                <button class="category-btn" data-category="technology">التقنية</button>
+                <button class="category-btn" data-category="lifestyle">نمط الحياة</button>
+                <button class="category-btn" data-category="food">الطعام</button>
+            </div>
+
+            <div class="sort-options">
+                <span class="sort-label">ترتيب حسب:</span>
+                <button class="sort-btn active" data-sort="followers">المتابعين</button>
+                <button class="sort-btn" data-sort="engagement">التفاعل</button>
+                <button class="sort-btn" data-sort="featured">المميز</button>
+                <button class="sort-btn" data-sort="newest">الأحدث</button>
+            </div>
         </div>
     </section>
 
     <!-- Main Content -->
     <main class="container">
-        <!-- Filters -->
-        <div class="filters">
-            <input type="text" id="searchInput" placeholder="ابحث عن مؤثر...">
-            <select id="categoryFilter">
-                <option value="">جميع الفئات</option>
-                <option value="marketing">التسويق</option>
-                <option value="fashion">الموضة</option>
-                <option value="technology">التقنية</option>
-            </select>
-            <select id="platformFilter">
-                <option value="">جميع المنصات</option>
-                <option value="instagram">Instagram</option>
-                <option value="youtube">YouTube</option>
-                <option value="tiktok">TikTok</option>
-            </select>
-            <select id="verificationFilter">
-                <option value="">جميع الحالات</option>
-                <option value="verified">موثق</option>
-                <option value="premium">بريميوم</option>
-            </select>
-        </div>
-
         <!-- Influencers Grid -->
         <div class="influencers-grid" id="influencersGrid">
             <div class="loading">
                 <div class="spinner"></div>
-                <p>جاري التحميل...</p>
+                <p>جاري تحميل المؤثرين...</p>
             </div>
+        </div>
+
+        <!-- Load More -->
+        <div class="load-more-container">
+            <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreInfluencers()">
+                <i class="fas fa-plus"></i> عرض المزيد
+            </button>
         </div>
     </main>
 
@@ -552,63 +1028,165 @@
     <div class="modal" id="contactModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()">&times;</button>
-            <h2 style="color: var(--primary-blue); margin-bottom: 20px; text-align: right;">التواصل مع المؤثر</h2>
+            <h2>التواصل مع المؤثر</h2>
+
+            <div id="contactMessage" class="message"></div>
+
             <form id="contactForm" onsubmit="submitContact(event)">
-                <div class="form-group">
-                    <label>الاسم الكامل</label>
-                    <input type="text" name="name" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الاسم الكامل *</label>
+                        <input type="text" name="name" required placeholder="مثال: أحمد محمد">
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني *</label>
+                        <input type="email" name="email" required placeholder="example@email.com">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>البريد الإلكتروني</label>
-                    <input type="email" name="email" required>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <input type="tel" name="phone" placeholder="+966 50 1234567">
+                    </div>
+                    <div class="form-group">
+                        <label>نوع المشروع</label>
+                        <select name="project_type">
+                            <option value="">اختر نوع المشروع</option>
+                            <option value="advertising">إعلان تجاري</option>
+                            <option value="product_review">مراجعة منتج</option>
+                            <option value="brand_ambassador">سفير علامة تجارية</option>
+                            <option value="content_creation">إنتاج محتوى</option>
+                            <option value="social_media">إدارة وسائل التواصل</option>
+                            <option value="collaboration">تعاون مشترك</option>
+                            <option value="other">أخرى</option>
+                        </select>
+                    </div>
                 </div>
+
                 <div class="form-group">
-                    <label>رقم الهاتف</label>
-                    <input type="tel" name="phone">
+                    <label>موضوع الرسالة *</label>
+                    <input type="text" name="subject" required placeholder="مثال: عرض تعاون إعلاني لمنتج جديد">
                 </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الميزانية المتوقعة (بالدولار)</label>
+                        <input type="number" name="budget" placeholder="5000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>المدة الزمنية المطلوبة</label>
+                        <select name="duration">
+                            <option value="">اختر المدة</option>
+                            <option value="1_week">أسبوع واحد</option>
+                            <option value="2_weeks">أسبوعين</option>
+                            <option value="1_month">شهر واحد</option>
+                            <option value="3_months">3 أشهر</option>
+                            <option value="6_months">6 أشهر</option>
+                            <option value="1_year">سنة كاملة</option>
+                            <option value="ongoing">مستمر</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label>الموضوع</label>
-                    <input type="text" name="subject" placeholder="مثلاً: عرض تعاون إعلاني" required>
+                    <label>تفاصيل المشروع *</label>
+                    <textarea name="message" required placeholder="اشرح مشروعك بالتفصيل، أهدافك، والنتائج المتوقعة..."></textarea>
                 </div>
-                <div class="form-group">
-                    <label>الميزانية المتوقعة</label>
-                    <input type="number" name="budget" placeholder="بالدولار أو الريال">
-                </div>
-                <div class="form-group">
-                    <label>الرسالة</label>
-                    <textarea name="message" required placeholder="اشرح اقتراحك والخدمات المطلوبة..."></textarea>
-                </div>
-                <button type="submit" class="btn-submit">إرسال الطلب</button>
+
+                <button type="submit" class="form-submit" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> إرسال الطلب
+                </button>
             </form>
         </div>
     </div>
 
+    <div id="site-footer"></div>
+
     <script>
         let allInfluencers = [];
         let filteredInfluencers = [];
+        let displayedInfluencers = [];
+        let currentPage = 1;
+        const itemsPerPage = 12;
+        let currentSort = 'followers';
         let currentInfluencer = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInfluencers();
+            setupEventListeners();
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search input
+            document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
+
+            // Filter selects
+            document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+            document.getElementById('platformFilter').addEventListener('change', applyFilters);
+            document.getElementById('verificationFilter').addEventListener('change', applyFilters);
+
+            // Category buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById('categoryFilter').value = this.dataset.category;
+                    applyFilters();
+                });
+            });
+
+            // Sort buttons
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSort = this.dataset.sort;
+                    sortInfluencers();
+                    displayInfluencers();
+                });
+            });
+
+            // Modal close on outside click
+            document.getElementById('contactModal').addEventListener('click', function(e) {
+                if (e.target.id === 'contactModal') {
+                    closeModal();
+                }
+            });
+        }
 
         // Fetch influencers
         async function loadInfluencers() {
             try {
                 const response = await fetch('/api/influencers.php?action=list');
                 const data = await response.json();
-                
+
                 if (data.success) {
                     allInfluencers = data.data || [];
-                    renderInfluencers();
+                    updateStats();
+                    applyFilters();
                 } else {
-                    document.getElementById('influencersGrid').innerHTML = '<div class="empty-state" style="grid-column: 1/-1"><i class="fas fa-inbox"></i><p>لا توجد مؤثرين متاحين حالياً</p></div>';
+                    showEmptyState('لا توجد مؤثرين متاحين حالياً');
                 }
             } catch (error) {
                 console.error('Error loading influencers:', error);
-                document.getElementById('influencersGrid').innerHTML = '<div class="empty-state" style="grid-column: 1/-1"><i class="fas fa-exclamation-circle"></i><p>خطأ في تحميل البيانات</p></div>';
+                showEmptyState('خطأ في تحميل البيانات');
             }
         }
 
-        // Render influencers
-        function renderInfluencers() {
-            applyFilters();
+        // Update hero stats
+        function updateStats() {
+            const totalInfluencers = allInfluencers.length;
+            const totalFollowers = allInfluencers.reduce((sum, inf) => sum + (inf.follower_count || 0), 0);
+            const avgEngagement = allInfluencers.length > 0 ?
+                (allInfluencers.reduce((sum, inf) => sum + (inf.engagement_rate || 0), 0) / allInfluencers.length).toFixed(1) : 0;
+
+            document.getElementById('totalInfluencers').textContent = formatNumber(totalInfluencers) + '+';
+            document.getElementById('totalFollowers').textContent = formatLargeNumber(totalFollowers) + '+';
+            document.getElementById('totalCollaborations').textContent = '1000+';
+            document.getElementById('avgEngagement').textContent = avgEngagement + '%';
         }
 
         // Apply filters
@@ -622,9 +1200,14 @@
                 let matches = true;
 
                 if (search) {
-                    matches = influencer.name_ar.includes(search) || 
-                             influencer.name.toLowerCase().includes(search) ||
-                             (influencer.bio && influencer.bio.includes(search));
+                    matches = matches && (
+                        (influencer.name_ar && influencer.name_ar.includes(search)) ||
+                        (influencer.name && influencer.name.toLowerCase().includes(search)) ||
+                        (influencer.bio_ar && influencer.bio_ar.includes(search)) ||
+                        (influencer.bio && influencer.bio.includes(search)) ||
+                        (influencer.category_ar && influencer.category_ar.includes(search)) ||
+                        (influencer.specialization_ar && influencer.specialization_ar.includes(search))
+                    );
                 }
 
                 if (category && influencer.category !== category) {
@@ -642,53 +1225,81 @@
                 return matches;
             });
 
+            sortInfluencers();
+            currentPage = 1;
             displayInfluencers();
+        }
+
+        // Sort influencers
+        function sortInfluencers() {
+            filteredInfluencers.sort((a, b) => {
+                switch (currentSort) {
+                    case 'followers':
+                        return (b.follower_count || 0) - (a.follower_count || 0);
+                    case 'engagement':
+                        return (b.engagement_rate || 0) - (a.engagement_rate || 0);
+                    case 'featured':
+                        return (b.is_featured || 0) - (a.is_featured || 0);
+                    case 'newest':
+                        return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+                    default:
+                        return 0;
+                }
+            });
         }
 
         // Display influencers
         function displayInfluencers() {
             const grid = document.getElementById('influencersGrid');
+            const startIndex = 0;
+            const endIndex = currentPage * itemsPerPage;
+            displayedInfluencers = filteredInfluencers.slice(startIndex, endIndex);
 
-            if (filteredInfluencers.length === 0) {
-                grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1"><i class="fas fa-search"></i><p>لا توجد نتائج تطابق البحث</p></div>';
+            if (displayedInfluencers.length === 0) {
+                showEmptyState('لا توجد نتائج تطابق البحث');
                 return;
             }
 
-            grid.innerHTML = filteredInfluencers.map(influencer => `
-                <div class="influencer-card">
-                    <div class="influencer-header" style="background: url('${influencer.image_url}') center/cover;">
-                        ${influencer.is_featured ? '<div class="featured-badge"><i class="fas fa-star"></i> مميز</div>' : ''}
-                        <div class="verification-badge">
-                            ${influencer.verification_status === 'verified' ? '<i class="fas fa-check-circle verification-verified"></i> موثق' : ''}
-                            ${influencer.verification_status === 'premium' ? '<i class="fas fa-crown verification-premium"></i> بريميوم' : ''}
-                            ${influencer.verification_status === 'unverified' ? '<i class="fas fa-circle-notch"></i> غير موثق' : ''}
+            grid.innerHTML = displayedInfluencers.map((influencer, index) => `
+                <div class="influencer-card fade-in" style="animation-delay: ${index * 0.1}s">
+                    <div class="influencer-header">
+                        <img src="${influencer.image_url || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80'}" alt="${influencer.name_ar || influencer.name}">
+                        <div class="influencer-badges">
+                            ${influencer.is_featured ? '<div class="badge badge-featured"><i class="fas fa-star"></i> مميز</div>' : ''}
+                            ${influencer.verification_status === 'verified' ? '<div class="badge badge-verified"><i class="fas fa-check"></i> موثق</div>' : ''}
+                            ${influencer.verification_status === 'premium' ? '<div class="badge badge-premium"><i class="fas fa-crown"></i> بريميوم</div>' : ''}
+                        </div>
+                        <div class="influencer-avatar">
+                            <img src="${influencer.image_url || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100&q=80'}" alt="${influencer.name_ar || influencer.name}">
                         </div>
                     </div>
 
                     <div class="influencer-content">
-                        <div class="influencer-name">${influencer.name_ar}</div>
-                        <div class="influencer-category">${influencer.category_ar}</div>
-                        <div class="platform-badge">
-                            <i class="fab fa-${influencer.platform === 'instagram' ? 'instagram' : influencer.platform === 'youtube' ? 'youtube' : 'tiktok'}"></i>
-                            ${influencer.platform}
+                        <div class="influencer-name">${influencer.name_ar || influencer.name}</div>
+                        <div class="influencer-category">${influencer.category_ar || influencer.category || 'مؤثر'}</div>
+
+                        <div class="platform-info">
+                            <div class="platform-badge">
+                                <i class="fab fa-${influencer.platform === 'instagram' ? 'instagram' : influencer.platform === 'youtube' ? 'youtube' : influencer.platform === 'tiktok' ? 'tiktok' : influencer.platform === 'twitter' ? 'twitter' : 'snapchat'}"></i>
+                                ${getPlatformName(influencer.platform)}
+                            </div>
                         </div>
-                        <p class="influencer-bio">${influencer.bio_ar || influencer.bio || 'مؤثر متخصص'}</p>
+
+                        <p class="influencer-bio">${influencer.bio_ar || influencer.bio || 'مؤثر متخصص في مجاله'}</p>
 
                         <div class="influencer-stats">
                             <div class="stat-item">
-                                <span class="stat-value">${formatNumber(influencer.follower_count)}</span>
+                                <span class="stat-value">${formatNumber(influencer.follower_count || 0)}</span>
                                 <span class="stat-label">المتابعون</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-value">${(influencer.engagement_rate || 0).toFixed(1)}%</span>
                                 <span class="stat-label">التفاعل</span>
                             </div>
-                            ${influencer.rate_per_post ? `
-                                <div class="stat-item">
-                                    <span class="stat-value">${influencer.rate_per_post}$</span>
-                                    <span class="stat-label">السعر</span>
-                                </div>
-                            ` : ''}
+                            <div class="stat-item">
+                                <span class="stat-value">${influencer.rate_per_post ? '$' + formatNumber(influencer.rate_per_post) : 'غير محدد'}</span>
+                                <span class="stat-label">السعر</span>
+                            </div>
                         </div>
 
                         <div class="influencer-actions">
@@ -704,15 +1315,35 @@
                     </div>
                 </div>
             `).join('');
+
+            // Update load more button
+            updateLoadMoreButton();
+        }
+
+        // Load more influencers
+        function loadMoreInfluencers() {
+            currentPage++;
+            displayInfluencers();
+        }
+
+        // Update load more button
+        function updateLoadMoreButton() {
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const hasMore = currentPage * itemsPerPage < filteredInfluencers.length;
+
+            loadMoreBtn.style.display = hasMore ? 'block' : 'none';
         }
 
         // Open contact modal
         function openContact(influencerId) {
             currentInfluencer = allInfluencers.find(i => i.id === influencerId);
-            const name = currentInfluencer ? (currentInfluencer.name_ar || currentInfluencer.name || '') : '';
-            document.getElementById('contactForm').reset();
-            document.getElementById('contactModal').classList.add('active');
+            if (!currentInfluencer) return;
+
+            const name = currentInfluencer.name_ar || currentInfluencer.name || '';
             document.querySelector('.modal-content h2').textContent = `التواصل مع ${name}`;
+            document.getElementById('contactForm').reset();
+            document.getElementById('contactMessage').style.display = 'none';
+            document.getElementById('contactModal').classList.add('active');
         }
 
         // Close modal
@@ -724,10 +1355,14 @@
         // Submit contact form
         async function submitContact(e) {
             e.preventDefault();
+            if (!currentInfluencer) return;
+
             const form = e.target;
-            const btn = form.querySelector('.btn-submit');
+            const btn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('contactMessage');
+
             btn.disabled = true;
-            btn.textContent = 'جاري الإرسال...';
+            btn.innerHTML = '<i class="fas fa-spinner spinning"></i> جاري الإرسال...';
 
             try {
                 const formData = new FormData(form);
@@ -742,41 +1377,100 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('تم إرسال طلبك بنجاح! سيتواصل معك المؤثر قريباً');
-                    closeModal();
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = 'تم إرسال طلبك بنجاح! سيتواصل معك المؤثر قريباً';
+                    messageDiv.style.display = 'block';
+                    form.reset();
+                    setTimeout(() => {
+                        closeModal();
+                    }, 3000);
                 } else {
-                    alert('حدث خطأ: ' + (data.message || 'حاول مجدداً'));
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = data.message || 'حدث خطأ في الإرسال';
+                    messageDiv.style.display = 'block';
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('خطأ في الإرسال. حاول مجدداً');
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'خطأ في الاتصال. حاول مجدداً';
+                messageDiv.style.display = 'block';
             } finally {
                 btn.disabled = false;
-                btn.textContent = 'إرسال الطلب';
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الطلب';
             }
         }
 
-        // Utility function
-        function formatNumber(num) {
-            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-            return num;
+        // Show empty state
+        function showEmptyState(message) {
+            const grid = document.getElementById('influencersGrid');
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <h3>لا توجد نتائج</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+            document.getElementById('loadMoreBtn').style.display = 'none';
         }
 
-        // Event listeners
-        document.getElementById('searchInput').addEventListener('input', applyFilters);
-        document.getElementById('categoryFilter').addEventListener('change', applyFilters);
-        document.getElementById('platformFilter').addEventListener('change', applyFilters);
-        document.getElementById('verificationFilter').addEventListener('change', applyFilters);
+        // Utility functions
+        function formatNumber(num) {
+            if (!num) return '0';
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
 
-        document.getElementById('contactModal').addEventListener('click', (e) => {
-            if (e.target.id === 'contactModal') closeModal();
+        function formatLargeNumber(num) {
+            if (!num) return '0';
+            if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function getPlatformName(platform) {
+            const names = {
+                'instagram': 'Instagram',
+                'youtube': 'YouTube',
+                'tiktok': 'TikTok',
+                'twitter': 'Twitter',
+                'snapchat': 'Snapchat'
+            };
+            return names[platform] || platform;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Custom cursor interactions
+        document.addEventListener('mousemove', function(e) {
+            const cursor = document.getElementById('customCursor');
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
         });
 
-        // Load on page load
-        loadInfluencers();
+        document.addEventListener('mouseenter', function(e) {
+            if (e.target.matches('.btn, .category-btn, .sort-btn, .filter-input, .filter-select')) {
+                document.getElementById('customCursor').classList.add('active');
+            }
+        }, true);
+
+        document.addEventListener('mouseleave', function(e) {
+            if (e.target.matches('.btn, .category-btn, .sort-btn, .filter-input, .filter-select')) {
+                document.getElementById('customCursor').classList.remove('active');
+            }
+        }, true);
     </script>
-    <div id="site-footer"></div>
     <script src="/static/js/site-layout.js"></script>
 </body>
 </html>

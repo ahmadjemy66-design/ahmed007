@@ -7,10 +7,24 @@
   <link rel="stylesheet" href="/static/css/site-layout.css">
   <style>
     .shell{max-width:900px;margin:90px auto;padding:18px}
-    .card{background:#fff;padding:18px;border-radius:10px}
-    label{display:block;margin-bottom:6px;font-weight:700}
-    textarea,input,select{width:100%;padding:10px;border-radius:6px;border:1px solid #e5e7eb;margin-bottom:12px}
-    .btn-primary{background:linear-gradient(135deg,var(--site-primary),var(--site-secondary));color:#fff;padding:10px 14px;border:none;border-radius:8px}
+    .card{background:#fff;padding:30px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1);border:1px solid rgba(8,19,123,0.08)}
+    .card h2{margin-bottom:20px;color:var(--site-primary)}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .form-section{background:var(--site-bg);padding:20px;border-radius:10px;border:1px solid rgba(8,19,123,0.08)}
+    .form-section h3{color:var(--site-primary);margin-bottom:15px;font-size:18px}
+    label{display:block;margin-bottom:8px;font-weight:600;color:var(--site-primary)}
+    textarea,input,select{width:100%;padding:12px;border:2px solid #e5e7eb;border-radius:8px;font-family:'Cairo',sans-serif;transition:border-color 0.2s}
+    textarea,input,select:focus{outline:none;border-color:var(--site-primary);box-shadow:0 0 0 3px rgba(8,19,123,0.1)}
+    .rating-stars{display:flex;gap:8px;margin-bottom:12px}
+    .star{cursor:pointer;font-size:24px;color:#ddd;transition:color 0.2s}
+    .star.active{color:#f39c12}
+    .btn-primary{background:linear-gradient(135deg,var(--site-primary),var(--site-secondary));color:#fff;padding:12px 30px;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:transform 0.2s}
+    .btn-primary:hover{transform:translateY(-2px)}
+    .actions{display:flex;gap:15px;justify-content:flex-end;margin-top:30px}
+    .error-message{color:#dc3545;font-size:14px;margin-top:5px;display:none}
+    .form-group.error input,.form-group.error textarea,.form-group.error select{border-color:#dc3545}
+    .form-group.error .error-message{display:block}
+    @media(max-width:768px){.form-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -18,34 +32,59 @@
   <main class="shell">
     <div class="card">
       <h2>أضف مراجعتك</h2>
-      <p id="note" style="color:#666">يمكنك إضافة مراجعة لمنتج/مقال/خدمة. تحتاج لتسجيل الدخول.</p>
+      <p id="note" style="color:#666;margin-bottom:20px">يمكنك إضافة مراجعة لمنتج/مقال/خدمة. تحتاج لتسجيل الدخول.</p>
       <form id="reviewForm">
-        <label>نوع المحتوى</label>
-        <select id="reviewable_type" name="reviewable_type">
-          <option value="product">منتج</option>
-          <option value="article">مقال</option>
-          <option value="service">خدمة</option>
-          <option value="dictionary">قاموس</option>
-        </select>
-        <label>معرف المحتوى (ID)</label>
-        <input id="reviewable_id" name="reviewable_id" placeholder="ضع الرقم أو المعرف هنا">
-        <label>التقييم (1-5)</label>
-        <select id="rating" name="rating">
-          <option value="5">5</option>
-          <option value="4">4</option>
-          <option value="3">3</option>
-          <option value="2">2</option>
-          <option value="1">1</option>
-        </select>
-        <label>عنوان المراجعة</label>
-        <input id="title_ar" name="title_ar">
-        <label>المحتوى</label>
-        <textarea id="content_ar" name="content_ar" rows="6"></textarea>
-        <div style="display:flex;gap:10px;justify-content:flex-end">
+        <div class="form-grid">
+          <div class="form-section">
+            <h3>معلومات المراجعة</h3>
+            <div class="form-group">
+              <label>نوع المحتوى *</label>
+              <select id="reviewable_type" name="reviewable_type">
+                <option value="product">منتج</option>
+                <option value="article">مقال</option>
+                <option value="service">خدمة</option>
+                <option value="dictionary">قاموس</option>
+              </select>
+              <div class="error-message">هذا الحقل مطلوب</div>
+            </div>
+            <div class="form-group">
+              <label>معرف المحتوى (ID) *</label>
+              <input id="reviewable_id" name="reviewable_id" placeholder="ضع الرقم أو المعرف هنا">
+              <div class="error-message">هذا الحقل مطلوب</div>
+            </div>
+            <div class="form-group">
+              <label>عنوان المراجعة</label>
+              <input id="title_ar" name="title_ar" placeholder="عنوان مختصر للمراجعة">
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h3>التقييم والمحتوى</h3>
+            <div class="form-group">
+              <label>التقييم *</label>
+              <div class="rating-stars" id="ratingStars">
+                <span class="star" data-rating="1">★</span>
+                <span class="star" data-rating="2">★</span>
+                <span class="star" data-rating="3">★</span>
+                <span class="star" data-rating="4">★</span>
+                <span class="star" data-rating="5">★</span>
+              </div>
+              <input type="hidden" id="rating" name="rating" value="5">
+              <div class="error-message">يرجى اختيار التقييم</div>
+            </div>
+            <div class="form-group">
+              <label>المحتوى *</label>
+              <textarea id="content_ar" name="content_ar" rows="6" placeholder="اكتب مراجعتك هنا..."></textarea>
+              <div class="error-message">هذا الحقل مطلوب</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="actions">
           <button type="button" class="btn-primary" onclick="submitReview()">إرسال المراجعة</button>
         </div>
       </form>
-      <div id="result" style="margin-top:12px"></div>
+      <div id="result" style="margin-top:20px"></div>
     </div>
   </main>
   <div id="site-footer"></div>
@@ -56,7 +95,64 @@
     if (params.get('type')) document.getElementById('reviewable_type').value = params.get('type');
     if (params.get('id')) document.getElementById('reviewable_id').value = params.get('id');
 
+    // Star rating functionality
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('rating');
+    
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        const rating = star.dataset.rating;
+        ratingInput.value = rating;
+        updateStars(rating);
+      });
+    });
+    
+    function updateStars(rating) {
+      stars.forEach((star, index) => {
+        if (index < rating) {
+          star.classList.add('active');
+        } else {
+          star.classList.remove('active');
+        }
+      });
+    }
+    
+    // Initialize with 5 stars
+    updateStars(5);
+
+    function validateReviewForm() {
+      let isValid = true;
+      document.querySelectorAll('.form-group').forEach(group => group.classList.remove('error'));
+      document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
+      
+      const type = document.getElementById('reviewable_type').value;
+      const id = document.getElementById('reviewable_id').value.trim();
+      const content = document.getElementById('content_ar').value.trim();
+      
+      if (!type) {
+        document.getElementById('reviewable_type').closest('.form-group').classList.add('error');
+        isValid = false;
+      }
+      
+      if (!id) {
+        document.getElementById('reviewable_id').closest('.form-group').classList.add('error');
+        isValid = false;
+      }
+      
+      if (!content) {
+        document.getElementById('content_ar').closest('.form-group').classList.add('error');
+        isValid = false;
+      }
+      
+      return isValid;
+    }
+
     async function submitReview(){
+      if (!validateReviewForm()) {
+        document.getElementById('result').innerHTML = '<div style="color:red;padding:10px;border-radius:8px;background:#fee">يرجى ملء جميع الحقول المطلوبة</div>';
+        return;
+      }
+      
       const form = new FormData();
       form.append('action','create_review');
       form.append('reviewable_type', document.getElementById('reviewable_type').value);
@@ -64,16 +160,21 @@
       form.append('rating', document.getElementById('rating').value);
       form.append('title_ar', document.getElementById('title_ar').value);
       form.append('content_ar', document.getElementById('content_ar').value);
+      
       try{
         const res = await fetch('/api/reviews.php', { method: 'POST', body: form });
         const data = await res.json();
         if (data.success) {
-          document.getElementById('result').innerHTML = '<div style="color:green">تم إرسال المراجعة بنجاح (قيد المراجعة)</div>';
+          document.getElementById('result').innerHTML = '<div style="color:green;padding:10px;border-radius:8px;background:#efe">تم إرسال المراجعة بنجاح (قيد المراجعة)</div>';
           document.getElementById('reviewForm').reset();
+          updateStars(5); // Reset stars
         } else {
-          document.getElementById('result').innerHTML = '<div style="color:red">حدث خطأ: ' + (data.error || data.message || 'غير معروف') + '</div>';
+          document.getElementById('result').innerHTML = '<div style="color:red;padding:10px;border-radius:8px;background:#fee">حدث خطأ: ' + (data.error || data.message || 'غير معروف') + '</div>';
         }
-      }catch(e){ console.error(e); document.getElementById('result').innerHTML = '<div style="color:red">خطأ في الإرسال</div>'; }
+      }catch(e){ 
+        console.error(e); 
+        document.getElementById('result').innerHTML = '<div style="color:red;padding:10px;border-radius:8px;background:#fee">خطأ في الإرسال</div>'; 
+      }
     }
   </script>
 </body>
