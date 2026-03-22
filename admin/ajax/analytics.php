@@ -10,6 +10,10 @@ if (!isAdmin()) {
 header('Content-Type: application/json');
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
+$days = intval($_GET['days'] ?? $_POST['days'] ?? 30);
+if ($days <= 0) {
+    $days = 30;
+}
 $response = ['success' => false, 'message' => ''];
 
 try {
@@ -40,12 +44,12 @@ try {
                     COUNT(*) as total_views,
                     AVG(view_duration) as avg_duration
                 FROM analytics_page_views
-                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                WHERE created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
                 GROUP BY page_type, page_title
                 ORDER BY total_views DESC
                 LIMIT 20
             ");
-            $stmt->execute();
+            $stmt->execute([':days' => $days]);
             $pages = $stmt->fetchAll();
             $response['success'] = true;
             $response['data'] = $pages;
@@ -63,10 +67,10 @@ try {
                     COUNT(DISTINCT session_id) as unique_users,
                     AVG(view_duration) as avg_duration
                 FROM analytics_page_views
-                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                WHERE created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
                 GROUP BY device_type
             ");
-            $stmt->execute();
+            $stmt->execute([':days' => $days]);
             $devices = $stmt->fetchAll();
             $response['success'] = true;
             $response['data'] = $devices;
@@ -80,9 +84,9 @@ try {
                     COUNT(*) as total_page_views,
                     AVG(view_duration) as avg_session_duration
                 FROM analytics_page_views
-                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                WHERE created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
             ");
-            $stmt->execute();
+            $stmt->execute([':days' => $days]);
             $views = $stmt->fetch();
 
             $stmt = $db->prepare("
@@ -114,16 +118,38 @@ try {
                     COUNT(*) as count,
                     COUNT(DISTINCT session_id) as unique_sessions
                 FROM analytics_page_views
-                WHERE referrer IS NOT NULL AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                WHERE referrer IS NOT NULL AND created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
                 GROUP BY referrer
                 ORDER BY count DESC
                 LIMIT 10
             ");
-            $stmt->execute();
+            $stmt->execute([':days' => $days]);
             $referrers = $stmt->fetchAll();
             $response['success'] = true;
             $response['data'] = $referrers;
             break;
+
+        case 'export_csv':
+            $stmt = $db->prepare("
+                SELECT id, session_id, page_type, page_title, referrer, user_agent, view_duration, created_at
+                FROM analytics_page_views
+                WHERE created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
+                ORDER BY created_at DESC
+            ");
+            $stmt->execute([':days' => $days]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename=analytics-export-' . date('Ymd') . '.csv');
+            $output = fopen('php://output', 'w');
+            fputs($output, "\xEF\xBB\xBF");
+            fputcsv($output, ['ID', 'Session', 'Page Type', 'Page Title', 'Referrer', 'User Agent', 'Duration', 'Timestamp']);
+
+            foreach ($rows as $row) {
+                fputcsv($output, [$row['id'], $row['session_id'], $row['page_type'], $row['page_title'], $row['referrer'], $row['user_agent'], $row['view_duration'], $row['created_at']]);
+            }
+            fclose($output);
+            exit;
 
         default:
             $response['message'] = 'إجراء غير صحيح';

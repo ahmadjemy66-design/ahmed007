@@ -137,6 +137,7 @@ $summary = $summaryStmt->fetch();
                 <option value="60">آخر 60 يوم</option>
                 <option value="90">آخر 90 يوم</option>
             </select>
+            <button class="btn" id="exportBtn" onclick="exportAnalyticsCSV()" style="margin-left: auto;">⤓ تصدير CSV</button>
         </div>
 
         <!-- Summary Statistics -->
@@ -157,6 +158,18 @@ $summary = $summaryStmt->fetch();
                 <div class="stat-number" id="newUsers">-</div>
                 <div class="stat-label">مستخدمين جدد</div>
             </div>
+        </div>
+
+        <!-- Daily Traffic Chart -->
+        <div class="chart-section">
+            <div class="chart-title"><i class="fas fa-chart-area"></i> حركة المرور اليومية</div>
+            <canvas id="dailyTrafficChart" style="height: 320px;"></canvas>
+        </div>
+
+        <!-- Device Breakdown Pie -->
+        <div class="chart-section">
+            <div class="chart-title"><i class="fas fa-pie-chart"></i> توزيع الأجهزة</div>
+            <canvas id="devicePieChart" style="height: 320px;"></canvas>
         </div>
 
         <!-- Popular Pages -->
@@ -211,13 +224,16 @@ $summary = $summaryStmt->fetch();
             </table>
         </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
+        let dailyTrafficChart = null;
+        let devicePieChart = null;
+
         function loadAnalytics() {
             const days = document.getElementById('daysFilter').value;
 
             // Load summary
-            fetch(`/admin/ajax/analytics.php?action=summary`)
+            fetch(`/admin/ajax/analytics.php?action=summary&days=${days}`)
                 .then(r => r.json())
                 .then(data => {
                     if (data.success) {
@@ -227,6 +243,9 @@ $summary = $summaryStmt->fetch();
                         document.getElementById('newUsers').textContent = data.data.new_users || 0;
                     }
                 });
+
+            loadDailyStats(days);
+            loadDeviceChart(days);
 
             // Load pages
             fetch(`/admin/ajax/analytics.php?action=page_stats`)
@@ -292,6 +311,94 @@ $summary = $summaryStmt->fetch();
                         tbody.innerHTML = '<tr><td colspan="3" class="empty-state">لا توجد بيانات</td></tr>';
                     }
                 });
+        }
+
+        function loadDailyStats(days) {
+            fetch(`/admin/ajax/analytics.php?action=daily_stats&days=${days}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) return;
+                    const labels = data.data.map(row => row.date).reverse();
+                    const visits = data.data.map(row => row.visits).reverse();
+                    const sessions = data.data.map(row => row.unique_sessions).reverse();
+
+                    const ctx = document.getElementById('dailyTrafficChart').getContext('2d');
+                    if (dailyTrafficChart) {
+                        dailyTrafficChart.data.labels = labels;
+                        dailyTrafficChart.data.datasets[0].data = visits;
+                        dailyTrafficChart.data.datasets[1].data = sessions;
+                        dailyTrafficChart.update();
+                    } else {
+                        dailyTrafficChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels,
+                                datasets: [
+                                    { label: 'زيارات الصفحة', data: visits, borderColor: '#08137b', backgroundColor: 'rgba(8, 19, 123, 0.2)', tension: 0.3 },
+                                    { label: 'الجلسات المميزة', data: sessions, borderColor: '#4f09a7', backgroundColor: 'rgba(79, 9, 167, 0.2)', tension: 0.3 }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'top' },
+                                    tooltip: { mode: 'index', intersect: false }
+                                },
+                                scales: {
+                                    x: { display: true, title: { display: true, text: 'التاريخ' } },
+                                    y: { display: true, title: { display: true, text: 'العدد' }, beginAtZero: true }
+                                }
+                            }
+                        });
+                    }
+                });
+        }
+
+        function loadDeviceChart(days) {
+            fetch(`/admin/ajax/analytics.php?action=device_stats&days=${days}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) return;
+
+                    const labels = data.data.map(item => item.device_type);
+                    const counts = data.data.map(item => item.count);
+
+                    const ctx = document.getElementById('devicePieChart').getContext('2d');
+                    if (devicePieChart) {
+                        devicePieChart.data.labels = labels;
+                        devicePieChart.data.datasets[0].data = counts;
+                        devicePieChart.update();
+                    } else {
+                        devicePieChart = new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels,
+                                datasets: [{
+                                    data: counts,
+                                    backgroundColor: ['#08137b', '#4f09a7', '#c5a47e'],
+                                    hoverOffset: 8
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: { position: 'bottom' },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: ctx => `${ctx.label}: ${ctx.formattedValue} زيارة`
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+        }
+
+        function exportAnalyticsCSV() {
+            const days = document.getElementById('daysFilter').value;
+            window.location.href = `/admin/ajax/analytics.php?action=export_csv&days=${days}`;
         }
 
         // Load analytics on page load
