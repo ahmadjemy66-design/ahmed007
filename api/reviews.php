@@ -234,7 +234,7 @@ try {
         $ratingStmt->execute([$reviewable_type, $reviewable_id]);
         $ratingData = $ratingStmt->fetch();
 
-        if (!empty($_FILES['images'])) {
+        if (!empty($_FILES['images']) && isset($_FILES['images']['name']) && is_array($_FILES['images']['name'])) {
             $uploadDir = __DIR__ . '/../static/uploads/reviews';
             if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
             $files = rearray_files($_FILES['images']);

@@ -16,13 +16,12 @@ try {
     switch ($action) {
         case 'list':
             $status = $_GET['status'] ?? '';
-            $query = "SELECT id, user_id, reviewable_type, reviewable_id, title_ar, rating, status, helpful_count, created_at FROM reviews ORDER BY created_at DESC LIMIT 500";
             
             if ($status) {
                 $stmt = $db->prepare("SELECT id, user_id, reviewable_type, reviewable_id, title_ar, rating, status, helpful_count, created_at FROM reviews WHERE status = :status ORDER BY created_at DESC LIMIT 500");
                 $stmt->execute([':status' => $status]);
             } else {
-                $stmt = $db->prepare($query);
+                $stmt = $db->prepare("SELECT id, user_id, reviewable_type, reviewable_id, title_ar, rating, status, helpful_count, created_at FROM reviews ORDER BY created_at DESC LIMIT 500");
                 $stmt->execute();
             }
             

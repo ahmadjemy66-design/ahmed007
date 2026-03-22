@@ -5,27 +5,30 @@
 $statusFilter = $_GET['status'] ?? 'all';
 $typeFilter = $_GET['type'] ?? 'all';
 
-// Build query based on filters
+// Build query based on filters using parameterized approach
 $whereConditions = [];
-if ($statusFilter !== 'all') {
-    $whereConditions[] = "r.status = '$statusFilter'";
-}
-if ($typeFilter !== 'all') {
-    $whereConditions[] = "r.reviewable_type = '$typeFilter'";
-}
-
-$whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
-
-$reviewsStmt = $db->prepare("
+$params = [];
+$sql = "
     SELECT r.id, r.title_ar, r.content_ar, r.rating, r.status, r.is_verified_purchase, r.created_at,
            u.full_name, r.reviewable_type, r.reviewable_id, r.user_id
     FROM reviews r
     LEFT JOIN users u ON r.user_id = u.id
-    $whereClause
-    ORDER BY r.created_at DESC
-    LIMIT 500
-");
-$reviewsStmt->execute();
+    WHERE 1=1
+";
+
+if ($statusFilter !== 'all') {
+    $sql .= " AND r.status = ?";
+    $params[] = $statusFilter;
+}
+if ($typeFilter !== 'all') {
+    $sql .= " AND r.reviewable_type = ?";
+    $params[] = $typeFilter;
+}
+
+$sql .= " ORDER BY r.created_at DESC LIMIT 500";
+
+$reviewsStmt = $db->prepare($sql);
+$reviewsStmt->execute($params);
 $reviews = $reviewsStmt->fetchAll();
 
 // Get statistics
