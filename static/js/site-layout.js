@@ -38,7 +38,9 @@
     function isClickable(element) {
       if (!element || element.nodeType !== 1) return false;
       try {
-        return typeof element.matches === 'function' && element.matches('a, button, .btn, .carousel-btn, .sector-tab, input[type="submit"], input[type="button"], .read-more, .carousel-dot, input, textarea, select, [onclick], .clickable, [role="button"], [tabindex]:not([tabindex="-1"])');
+        const matchesFn = element.matches || element.msMatchesSelector || element.webkitMatchesSelector;
+        if (typeof matchesFn !== 'function') return false;
+        return matchesFn.call(element, 'a, button, .btn, .carousel-btn, .sector-tab, input[type="submit"], input[type="button"], .read-more, .carousel-dot, input, textarea, select, [onclick], .clickable, [role="button"], [tabindex]:not([tabindex="-1"])');
       } catch (e) {
         return false;
       }

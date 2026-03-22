@@ -2502,31 +2502,35 @@
         let allReviews = [];
 
         async function loadReviews() {
+            const baseUrl = '/api/reviews.php';
+            const type = 'article';
+
             try {
                 // Load review statistics
-                const statsRes = await fetch('/api/reviews.php?action=get_review_stats&reviewable_type=article');
+                const statsUrl = `${baseUrl}?action=${encodeURIComponent('get_review_stats')}&reviewable_type=${encodeURIComponent(type)}`;
+                const statsRes = await fetch(statsUrl);
                 if (statsRes.ok) {
                     const statsData = await statsRes.json();
                     if (statsData.success && statsData.data) {
-                        const stats = statsData.data;
-                        displayReviewStats(stats);
+                        displayReviewStats(statsData.data);
                     }
                 } else {
                     console.warn('Review stats request failed', statsRes.status);
                 }
 
                 // Load actual reviews
-                const reviewsRes = await fetch('/api/reviews.php?action=get_reviews_with_content&reviewable_type=article&limit=10');
+                const reviewsUrl = `${baseUrl}?action=${encodeURIComponent('get_reviews_with_content')}&reviewable_type=${encodeURIComponent(type)}&limit=10`;
+                const reviewsRes = await fetch(reviewsUrl);
+
                 if (reviewsRes.ok) {
                     const reviewsData = await reviewsRes.json();
-                    if (reviewsData.success && Array.isArray(reviewsData.data)) {
+                    const reviewsCarousel = document.getElementById('reviewsCarousel');
+
+                    if (reviewsData.success && Array.isArray(reviewsData.data) && reviewsData.data.length) {
                         allReviews = reviewsData.data;
                         displayReviewCarousel();
-                    } else {
-                        const reviewsCarousel = document.getElementById('reviewsCarousel');
-                        if (reviewsCarousel) {
-                            reviewsCarousel.innerHTML = '<div class="empty-state"><p>لا توجد تقييمات متاحة حالياً</p></div>';
-                        }
+                    } else if (reviewsCarousel) {
+                        reviewsCarousel.innerHTML = '<div class="empty-state"><p>لا توجد تقييمات متاحة حالياً</p></div>';
                     }
                 } else {
                     console.warn('Reviews request failed', reviewsRes.status);
@@ -2537,7 +2541,10 @@
                 }
             } catch (e) {
                 console.error('Failed to load reviews:', e);
-                document.getElementById('reviewsCarousel').innerHTML = '<div class="empty-state"><p>⚠️ خطأ في تحميل التقييمات</p></div>';
+                const reviewsCarousel = document.getElementById('reviewsCarousel');
+                if (reviewsCarousel) {
+                    reviewsCarousel.innerHTML = '<div class="empty-state"><p>⚠️ خطأ في تحميل التقييمات</p></div>';
+                }
             }
         }
 

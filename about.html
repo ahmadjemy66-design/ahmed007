@@ -1161,14 +1161,18 @@
 
         // Load Reviews for About Page
         async function loadAboutReviews() {
+            const baseUrl = '/api/reviews.php';
+            const type = 'article';
+
             try {
-                const reviewsRes = await fetch('/api/reviews.php?action=get_reviews_with_content&reviewable_type=article&limit=6');
-                const reviewsData = await reviewsRes.json();
-                
+                const reviewsRes = await fetch(`${baseUrl}?action=${encodeURIComponent('get_reviews_with_content')}&reviewable_type=${encodeURIComponent(type)}&limit=6`);
                 const grid = document.getElementById('aboutReviewsGrid');
                 if (!grid) return;
 
-                if (reviewsData.success && Array.isArray(reviewsData.data) && reviewsData.data.length > 0) {
+                if (reviewsRes.ok) {
+                    const reviewsData = await reviewsRes.json();
+
+                    if (reviewsData.success && Array.isArray(reviewsData.data) && reviewsData.data.length > 0) {
                     grid.innerHTML = '';
                     reviewsData.data.forEach((review, idx) => {
                         const reviewCard = document.createElement('div');
