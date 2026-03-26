@@ -98,6 +98,14 @@
         color: white;
         font-size: 20px;
         font-weight: bold;
+        overflow: hidden;
+    }
+    .brand-logo-preview img.brand-logo-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+        background: #fff;
     }
     
     .status-badge { 
@@ -294,7 +302,11 @@ $sectors = $stmt->fetchAll();
                         <tr>
                             <td>
                                 <div class="brand-logo-preview" style="background: linear-gradient(135deg, <?php echo $brand['logo_color']; ?>, <?php echo $brand['logo_color_secondary']; ?>);">
-                                    <i class="fas <?php echo $brand['icon']; ?>"></i>
+                                    <?php if (!empty($brand['logo_url'])): ?>
+                                        <img src="<?php echo sanitize($brand['logo_url']); ?>" alt="<?php echo sanitize($brand['name_ar']); ?>" class="brand-logo-image" onerror="this.style.display='none'" />
+                                    <?php else: ?>
+                                        <i class="fas <?php echo $brand['icon']; ?>"></i>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                             <td>
@@ -414,12 +426,18 @@ $sectors = $stmt->fetchAll();
             
             <div class="form-row">
                 <div class="form-group">
-                    <label for="brandIcon">الأيقونة *</label>
-                    <input type="text" id="brandIcon" placeholder="مثال: fa-landmark" required>
+                    <label for="brandIcon">الأيقونة (اختياري، ستكون احتياطية إذا لم يوجد شعار)</label>
+                    <input type="text" id="brandIcon" placeholder="مثال: fa-landmark">
                 </div>
                 <div class="form-group">
                     <label for="brandLogoUrl">رابط الشعار (اختياري)</label>
                     <input type="url" id="brandLogoUrl">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="brandLogoFile">تحميل صورة شعار (اختياري)</label>
+                    <input type="file" id="brandLogoFile" accept="image/*">
                 </div>
             </div>
             
@@ -552,6 +570,7 @@ $sectors = $stmt->fetchAll();
                     document.getElementById('brandDescEn').value = brand.description;
                     document.getElementById('brandIcon').value = brand.icon;
                     document.getElementById('brandLogoUrl').value = brand.logo_url;
+                    document.getElementById('brandLogoFile').value = '';
                     document.getElementById('brandColor1').value = brand.logo_color;
                     document.getElementById('brandColor2').value = brand.logo_color_secondary;
                     document.getElementById('brandStatus').value = brand.status;
@@ -631,27 +650,31 @@ $sectors = $stmt->fetchAll();
         e.preventDefault();
         const id = document.getElementById('brandId').value;
         const action = id ? 'edit_brand' : 'add_brand';
-        
-        const data = new URLSearchParams({
-            action: action,
-            id: id,
-            sector_id: document.getElementById('brandSectorId').value,
-            name_ar: document.getElementById('brandNameAr').value,
-            name: document.getElementById('brandNameEn').value,
-            category_ar: document.getElementById('brandCategoryAr').value,
-            category: document.getElementById('brandCategoryEn').value,
-            description_ar: document.getElementById('brandDescAr').value,
-            description: document.getElementById('brandDescEn').value,
-            icon: document.getElementById('brandIcon').value,
-            logo_url: document.getElementById('brandLogoUrl').value,
-            logo_color: document.getElementById('brandColor1').value,
-            logo_color_secondary: document.getElementById('brandColor2').value,
-            status: document.getElementById('brandStatus').value
-        });
+
+        const formData = new FormData();
+        formData.append('action', action);
+        formData.append('id', id);
+        formData.append('sector_id', document.getElementById('brandSectorId').value);
+        formData.append('name_ar', document.getElementById('brandNameAr').value);
+        formData.append('name', document.getElementById('brandNameEn').value);
+        formData.append('category_ar', document.getElementById('brandCategoryAr').value);
+        formData.append('category', document.getElementById('brandCategoryEn').value);
+        formData.append('description_ar', document.getElementById('brandDescAr').value);
+        formData.append('description', document.getElementById('brandDescEn').value);
+        formData.append('icon', document.getElementById('brandIcon').value);
+        formData.append('logo_url', document.getElementById('brandLogoUrl').value);
+        formData.append('logo_color', document.getElementById('brandColor1').value);
+        formData.append('logo_color_secondary', document.getElementById('brandColor2').value);
+        formData.append('status', document.getElementById('brandStatus').value);
+
+        const logoFile = document.getElementById('brandLogoFile').files[0];
+        if (logoFile) {
+            formData.append('logo_file', logoFile);
+        }
 
         fetch('/admin/ajax/brands.php', {
             method: 'POST',
-            body: data
+            body: formData
         })
         .then(r => r.json())
         .then(data => {

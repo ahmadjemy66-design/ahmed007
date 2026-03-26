@@ -1279,6 +1279,14 @@
             font-size: 3rem;
             color: var(--white);
             transition: var(--transition);
+            overflow: hidden;
+        }
+        .brand-logo img.brand-logo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 15px;
+            background: #fff;
         }
 
         .brand-card:hover .brand-logo {
@@ -2310,9 +2318,13 @@
                             brandCard.className = 'brand-card';
                             brandCard.style.animationDelay = `${brandIdx * 0.1}s`;
                             const logoGradient = `linear-gradient(135deg, ${brand.logo_color || '#08137b'}, ${brand.logo_color_secondary || '#4f09a7'})`;
-                            brandCard.innerHTML = `
+                            const brandLogoContent = (brand.logo_url && brand.logo_url.trim())
+                            ? `<img src="${escapeHtml(brand.logo_url)}" alt="${escapeHtml(brand.name_ar)}" class="brand-logo-image" onerror="this.style.display='none'" />`
+                            : `<i class="fas ${brand.icon || 'fa-star'}"></i>`;
+
+                        brandCard.innerHTML = `
                                 <div class="brand-logo" style="background: ${logoGradient};">
-                                    <i class="fas ${brand.icon || 'fa-star'}"></i>
+                                    ${brandLogoContent}
                                 </div>
                                 <div class="brand-name">${escapeHtml(brand.name_ar)}</div>
                                 <div class="brand-category">${escapeHtml(brand.category_ar || '')}</div>

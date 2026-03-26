@@ -21,7 +21,34 @@ try {
             $logo_color = trim($_POST['logo_color'] ?? '#08137b');
             $logo_color_secondary = trim($_POST['logo_color_secondary'] ?? '#4f09a7');
             $status = $_POST['status'] ?? 'active';
-            
+
+            // Handle uploaded logo file if present (takes precedence over logo_url)
+            if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+                $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+                $uploadDir = dirname(__DIR__, 2) . '/uploads/brands/';
+                $uploadUrlBase = '/uploads/brands/';
+
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+
+                $fileName = basename($_FILES['logo_file']['name']);
+                $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+                if (!in_array($fileExt, $allowed)) {
+                    throw new Exception('نوع ملف الشعار غير مدعوم');
+                }
+
+                $newFileName = uniqid('brand_', true) . '.' . $fileExt;
+                $targetPath = $uploadDir . $newFileName;
+
+                if (!move_uploaded_file($_FILES['logo_file']['tmp_name'], $targetPath)) {
+                    throw new Exception('فشل تحميل ملف الشعار');
+                }
+
+                $logo_url = $uploadUrlBase . $newFileName;
+            }
+
             if (!$sector_id || !$name_ar || !$name) {
                 throw new Exception('يجب إدخال القطاع والاسم بالعربية والإنجليزية');
             }
@@ -57,7 +84,34 @@ try {
             $logo_color = trim($_POST['logo_color'] ?? '#08137b');
             $logo_color_secondary = trim($_POST['logo_color_secondary'] ?? '#4f09a7');
             $status = $_POST['status'] ?? 'active';
-            
+
+            // Handle uploaded logo file if present (takes precedence over logo_url)
+            if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+                $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+                $uploadDir = dirname(__DIR__, 2) . '/uploads/brands/';
+                $uploadUrlBase = '/uploads/brands/';
+
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+
+                $fileName = basename($_FILES['logo_file']['name']);
+                $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+                if (!in_array($fileExt, $allowed)) {
+                    throw new Exception('نوع ملف الشعار غير مدعوم');
+                }
+
+                $newFileName = uniqid('brand_', true) . '.' . $fileExt;
+                $targetPath = $uploadDir . $newFileName;
+
+                if (!move_uploaded_file($_FILES['logo_file']['tmp_name'], $targetPath)) {
+                    throw new Exception('فشل تحميل ملف الشعار');
+                }
+
+                $logo_url = $uploadUrlBase . $newFileName;
+            }
+
             if (!$sector_id || !$name_ar || !$name) {
                 throw new Exception('يجب إدخال القطاع والاسم بالعربية والإنجليزية');
             }
